@@ -1,112 +1,117 @@
 ---
 name: chart-generator
-description: Creates charts and visualizations showing the relationship between spelling errors and semantic distance. Use when you need to visualize experimental results.
-allowed-tools: Bash, Read, Write
+description: Creates text-based visualizations and reports showing the relationship between spelling errors and semantic distance. Use when you need to visualize experimental results.
+allowed-tools: Read, Write
 ---
 
 # Chart Generator Skill
 
-This skill creates professional charts and visualizations for displaying experimental results, particularly for the translation semantic drift experiment.
+This skill creates text-based visualizations and structured reports for displaying experimental results, particularly for the translation semantic drift experiment.
 
 ## Instructions
 
-To generate charts:
+To generate visualizations:
 1. Accept experimental data (typo rates and semantic distances)
-2. Use matplotlib to create professional visualizations
-3. Save charts to the specified output path
-4. Optionally display charts interactively
+2. Use Claude's native text formatting to create visualizations
+3. Save reports to markdown or text files
+4. Create ASCII art charts if needed
 
-## Chart Types
+## Visualization Types
 
-### 1. Simple Typo vs Distance Plot
-Shows the relationship between spelling error rate (x-axis) and semantic distance (y-axis).
+### 1. Text-Based Results Table
+Tabular display of typo rates vs semantic distances in markdown format.
 
-### 2. Detailed Analysis Plot
-Multi-panel visualization showing both line plot and bar chart distribution.
+### 2. ASCII Bar Chart
+Simple bar chart representation using text characters.
 
-### 3. Results Table
-CSV export of experimental results for further analysis.
+### 3. Line Chart (for Automated Experiments)
+ASCII art line chart showing progression of semantic distance across typo percentages.
 
-## Python Code Usage
+### 4. Summary Report
+Comprehensive markdown report with analysis and interpretation.
 
-```python
-import sys
-sys.path.append('.claude/skills/chart-generator')
-from chart_utils import (
-    plot_typo_vs_distance,
-    plot_detailed_analysis,
-    save_results_table
-)
+## Implementation
 
-# Example data
-typo_rates = [0.0, 0.10, 0.15, 0.20, 0.25]
-distances = [0.45, 0.52, 0.58, 0.63, 0.68]
+Use Claude's native text processing to:
+- Format data into readable tables
+- Create ASCII art visualizations
+- Generate markdown reports with proper structure
+- Add interpretive commentary and insights
 
-# Generate simple plot
-plot_typo_vs_distance(
-    typo_rates=typo_rates,
-    distances=distances,
-    output_path='results/semantic_drift.png',
-    show=True
-)
+## Usage Examples
 
-# Generate detailed analysis
-results = {
-    'typo_rates': typo_rates,
-    'distances': distances,
-    'original_sentences': [...],
-    'final_sentences': [...]
-}
+### Example 1: Single Run Report
+For a single sentence experiment, create a concise report with translation chain and distance.
 
-plot_detailed_analysis(
-    results_dict=results,
-    output_path='results/detailed_analysis.png'
-)
-
-# Save results table
-save_results_table(
-    results_dict=results,
-    output_path='results/results.csv'
-)
-```
-
-## Chart Features
-
-- **Professional styling**: Clean, publication-ready appearance
-- **Value annotations**: Distance values labeled on data points
-- **Grid lines**: Easy-to-read grid overlay
-- **High resolution**: 300 DPI output for presentations
-- **Customizable**: Colors, sizes, and labels can be modified
-
-## Usage Example
-
+### Example 2: Automated Experiments Chart
 Input data:
-```python
-typo_rates = [0.0, 0.05, 0.10, 0.15, 0.20, 0.25]
-distances = [0.42, 0.48, 0.54, 0.60, 0.65, 0.70]
+- Typo rates: [0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50]
+- Average distances: [0.45, 0.52, 0.58, 0.63, 0.70, 0.75, 0.81]
+
+Output (markdown table):
+```
+| Typo Rate | Avg Semantic Distance | Interpretation        |
+|-----------|----------------------|-----------------------|
+| 20%       | 0.45                 | Moderate drift        |
+| 25%       | 0.52                 | Moderate drift        |
+| 30%       | 0.58                 | Moderate-high drift   |
+| 35%       | 0.63                 | Moderate-high drift   |
+| 40%       | 0.70                 | High drift            |
+| 45%       | 0.75                 | High drift            |
+| 50%       | 0.81                 | Severe drift          |
 ```
 
-Output:
-- PNG chart saved to specified path
-- X-axis: "Percentage of Spelling Errors in Initial Sentence (%)"
-- Y-axis: "Semantic Distance (Cosine Distance)"
-- Title: "Effect of Spelling Errors on Multi-Translation Semantic Drift"
+ASCII Line Chart:
+```
+Average Semantic Distance vs Typo Error Rate
 
-## Output Formats
+0.90 |
+0.80 |                                    ●  (50%)
+0.70 |                              ●        (45%)
+0.60 |                        ●              (40%)
+0.50 |                  ●                    (35%)
+0.40 |            ●                          (30%)
+0.30 |      ●                                (25%)
+0.20 | ●                                     (20%)
+0.10 |
+     +----+----+----+----+----+----+----+
+      20%  25%  30%  35%  40%  45%  50%
+                Typo Error Rate
+```
 
-- **PNG**: Raster image, good for presentations and documents
-- **CSV**: Tabular data export for Excel or further analysis
-- **Interactive**: Can display plot windows when `show=True`
+ASCII Bar Chart:
+```
+Average Semantic Distance by Typo Rate
+20%  █████████░░░░░░ 0.45
+25%  ██████████░░░░░ 0.52
+30%  ███████████░░░░ 0.58
+35%  ████████████░░░ 0.63
+40%  █████████████░░ 0.70
+45%  ██████████████░ 0.75
+50%  ███████████████ 0.81
+```
 
-## Functions Available
+## Output Format
 
-1. `plot_typo_vs_distance(typo_rates, distances, output_path, show)` - Basic line plot
-2. `plot_detailed_analysis(results_dict, output_path, show)` - Multi-panel visualization
-3. `save_results_table(results_dict, output_path)` - Export to CSV
+Save results to markdown files in `results/` directory with:
+- Title and timestamp
+- Experimental parameters (typo rates, number of sentences, etc.)
+- Data tables
+- ASCII visualizations (bar charts, line charts)
+- Summary statistics
+- Interpretation and insights
+
+For automated experiments specifically include:
+- Sample sentences with typos at each level
+- Average distances per typo percentage
+- Trend analysis (linear, exponential, etc.)
+- Observations about translation robustness
 
 ## Notes
 
-- Requires `matplotlib` and `numpy` packages
-- Creates output directories automatically if they don't exist
-- Charts are closed after saving to free memory
-- Can be used for both interactive exploration and batch processing
+- **NO PYTHON CODE** - Use Claude's native text formatting only
+- Save all final results to `results/` directory
+- Intermediate working files can go to `tmp/`
+- Markdown format for easy viewing and conversion
+- Suitable for terminal display and documentation
+- Support both single-run reports and automated experiment charts

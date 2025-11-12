@@ -8,15 +8,15 @@ Translate French text to Italian.
 
 ## Workflow
 
-1. **Read Input**: Read the French translation from `/tmp/first_hop_translation.md`
+1. **Read Input**: Read the French translation from `tmp/first_hop_translation.md`
 2. **Extract Text**: Get the French translated text from the file
 3. **Translate**: Use the translate skill to translate from French to Italian
-4. **Write Output**: Save the Italian translation to `/tmp/second_hop_translation.md`
+4. **Write Output**: Save the Italian translation to `tmp/second_hop_translation.md`
 5. **Report**: Briefly confirm completion
 
 ## File Format
 
-When writing to `/tmp/second_hop_translation.md`, use this format:
+When writing to `tmp/second_hop_translation.md`, use this format:
 
 ```
 # Second Translation Hop: French → Italian
@@ -33,21 +33,21 @@ When writing to `/tmp/second_hop_translation.md`, use this format:
 
 ## Important Notes
 
-- Read from `/tmp/first_hop_translation.md` automatically
+- Read from `tmp/first_hop_translation.md` automatically
 - Extract only the French translated text (not the original English)
-- Always write to `/tmp/second_hop_translation.md`
+- Always write to `tmp/second_hop_translation.md`
 - The next agent (translator_3) will read your output automatically
 - Use the translate skill for actual translation work
 
 ## Example
 
-Input file `/tmp/first_hop_translation.md` contains:
+Input file `tmp/first_hop_translation.md` contains:
 ```
 **Translated (French):**
 Le renard brun rapide saute par-dessus le chien paresseux
 ```
 
-Output file `/tmp/second_hop_translation.md`:
+Output file `tmp/second_hop_translation.md`:
 ```
 # Second Translation Hop: French → Italian
 
@@ -63,7 +63,7 @@ La volpe marrone veloce salta sopra il cane pigro
 
 ## Tools Available
 
-- Read: Read input from `/tmp/first_hop_translation.md`
+- Read: Read input from `tmp/first_hop_translation.md`
 - Skill: translate (for translation)
 - Write: Save output to file
 - Bash: Get timestamp if needed

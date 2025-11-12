@@ -6,18 +6,21 @@
 - [Multi-Agent Architecture](#multi-agent-architecture)
 - [How It Works](#how-it-works)
 - [Installation](#installation)
+- [Experiment Types](#experiment-types)
+  - [User Input Experiments](#user-input-experiments)
+  - [Automated Experiments](#automated-experiments)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Agent and Skill Descriptions](#agent-and-skill-descriptions)
 - [Experiment Configuration](#experiment-configuration)
 - [Understanding Results](#understanding-results)
-- [Example Run](#example-run)
+- [Example Runs](#example-runs)
 
 ---
 
 ## Overview
 
-This project demonstrates **multi-agent orchestration** with Claude Code to measure semantic drift caused by spelling errors across multiple language translations. It showcases how autonomous agents can communicate through files and coordinate complex workflows.
+This project demonstrates **multi-agent orchestration** with semantic drift measurement caused by spelling errors across multiple language translations. It showcases how autonomous agents can communicate through files and coordinate complex workflows.
 
 **Key Concept**: When text with spelling errors is translated through multiple languages (English → French → Italian → Spanish), how much does the semantic meaning change?
 
@@ -59,14 +62,14 @@ User provides sentence with typos
 ┌─────────────────────────────────────────┐
 │   TRANSLATOR 2 AGENT                    │
 │   - Reads: /tmp/first_hop_translation.md │
-│   - Translates: French → Spanish        │
+│   - Translates: French → Italian        │
 │   - Writes: /tmp/second_hop_translation.md│
 └─────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────┐
 │   TRANSLATOR 3 AGENT                    │
 │   - Reads: /tmp/second_hop_translation.md│
-│   - Translates: Spanish → Hebrew        │
+│   - Translates: Italian → Spanish       │
 │   - Writes: /tmp/third_hop_translation.md│
 └─────────────────────────────────────────┘
         ↓
@@ -104,8 +107,8 @@ User provides sentence with typos
 
 3. **Translation Chain**:
    - **Translator 1**: Reads English, translates to French, saves to `/tmp/first_hop_translation.md`
-   - **Translator 2**: Reads French file, translates to Spanish, saves to `/tmp/second_hop_translation.md`
-   - **Translator 3**: Reads Spanish file, translates to Hebrew, saves to `/tmp/third_hop_translation.md`
+   - **Translator 2**: Reads French file, translates to Italian, saves to `/tmp/second_hop_translation.md`
+   - **Translator 3**: Reads Italian file, translates to Spanish, saves to `/tmp/third_hop_translation.md`
 
 4. **Semantic Analysis**:
    - **Embedding Analyzer** reads both original and final translation files
@@ -129,7 +132,7 @@ User provides sentence with typos
 ### Prerequisites
 
 - Python 3.8 or higher
-- Claude Code CLI
+- Claude Code CLI (for user input experiments)
 - Internet connection (for translation API)
 
 ### Step 1: Install Python Dependencies
@@ -144,7 +147,7 @@ This installs:
 - `torch` - Deep learning framework (required by sentence-transformers)
 - `numpy` - Numerical computations
 - `scipy` - Distance calculations
-- `matplotlib` - Visualization
+- `matplotlib` - Visualization (for automated experiments)
 - `transformers` - NLP utilities
 
 ### Step 2: Verify Installation
@@ -163,11 +166,72 @@ On first run, the embedding model (~90MB) will be downloaded automatically.
 
 ---
 
+## Experiment Types
+
+This project supports two distinct experiment types: **User Input Experiments** and **Automated Experiments**.
+
+### User Input Experiments
+
+**Purpose**: Interactive testing with custom sentences containing spelling errors
+
+**How it works**:
+- User provides a sentence with typos directly to Claude Code
+- Multi-agent system processes the sentence through translation chain
+- Agents communicate via file-based messaging
+- Results are analyzed and reported in real-time
+
+**Best for**:
+- Testing specific sentences
+- Understanding how particular typos affect translation
+- Interactive exploration of semantic drift
+- Demonstrating multi-agent coordination
+
+**Example**:
+```
+User: "Please analyze this sentence: 'The quik brown fox jumps ovr the lazi dog'"
+Claude: [Activates multi-agent system, reports semantic distance]
+```
+
+**Translation Chain**: English → French → Italian → Spanish
+
+---
+
+### Automated Experiments
+
+**Purpose**: Systematic batch testing across multiple typo rates
+
+**How it works**:
+- Python script (`run_experiment.py`) runs autonomously
+- Generates typos at different rates (0%, 5%, 10%, 15%, 20%, 25%)
+- Runs complete translation chain for each typo rate
+- Generates visualizations and CSV data files
+- Produces statistical analysis and charts
+
+**Best for**:
+- Scientific analysis of typo rate vs semantic drift
+- Generating datasets for research
+- Creating visualizations and charts
+- Batch processing multiple experiments
+
+**Example**:
+```bash
+python run_experiment.py
+```
+
+**Translation Chain**: English → French → Spanish → Hebrew
+
+**Output Files**:
+- `results/semantic_drift_chart.png` - Visualization of typo rate vs distance
+- `results/experiment_results.csv` - Raw data in CSV format
+- Console output with statistical analysis
+
+---
+
 ## Usage
 
-### Method 1: Single Sentence Test
+### Method 1: User Input Experiments (Interactive)
 
-From within Claude Code:
+**Using Claude Code CLI:**
 
 ```
 Please run the translation drift experiment with this sentence:
@@ -176,65 +240,70 @@ Please run the translation drift experiment with this sentence:
 
 Claude will automatically:
 1. Activate the main orchestrator
-2. Run the translation chain
+2. Run the translation chain through multiple agents
 3. Compute semantic distance
 4. Report results
 
-### Method 2: Batch Experiment (Multiple Typo Rates)
+**Example sentences to try**:
+- `"The quik brown fox jumps ovr the lazi dog"` (25% typos)
+- `"Th qk brwn fx jmps vr th lz dg"` (50% typos)
+- `"Hello wrld, hw ar yu tday?"` (Different sentence structure)
 
-Create and run `experiment_runner.py`:
+### Method 2: Automated Experiments (Batch)
 
-```python
-"""
-Run the full experiment with varying typo rates (20% to 50%)
-"""
-import subprocess
-import json
-import matplotlib.pyplot as plt
-from pathlib import Path
-
-# Add skills to path
-import sys
-sys.path.append('.claude/skills/semantic_analysis')
-from compute_embeddings import compute_embedding
-from measure_distance import cosine_distance
-
-# Original sentence
-original = "The quick brown fox jumps over the lazy dog in the beautiful sunny park"
-
-# Typo rates to test
-typo_rates = [0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50]
-
-# For demonstration: manually create typos at different rates
-# In practice, you'd use the typo-injector skill or similar
-
-results = {'rates': [], 'distances': []}
-
-print("Running experiment with typo rates from 20% to 50%...")
-print("="*60)
-
-# Note: This is a simplified example
-# Full implementation would call Claude agents for each iteration
-
-print("\nExperiment complete! Check results_chart.png for visualization.")
+**Run the complete experiment:**
+```bash
+python run_experiment.py
 ```
 
-### Method 3: Direct Python Script Execution
+This will:
+- Test typo rates from 0% to 25%
+- Generate 6 data points
+- Create visualizations
+- Save results to CSV
+- Print statistical analysis
 
-Test the Python skills directly:
+**Customizing the automated experiment:**
+```python
+# Edit run_experiment.py to modify:
+sentence = "Your custom sentence here"
+typo_rates = [0.0, 0.10, 0.20, 0.30]  # Custom rates
+translation_chain = [
+    ('en', 'de', 'English to German'),  # Custom languages
+    ('de', 'ja', 'German to Japanese'),
+    ('ja', 'ar', 'Japanese to Arabic')
+]
+```
+
+### Method 3: Direct Testing (Component Level)
+
+Test individual components:
 
 ```bash
-# Compute embedding for a text
-python .claude/skills/semantic_analysis/compute_embeddings.py "Hello world"
+# Test typo injection
+python -c "
+from typo_utils import introduce_typos
+result = introduce_typos('Hello world', 0.25)
+print(f'Original: Hello world')
+print(f'With typos: {result}')
+"
 
-# Measure distance between two texts
-python .claude/skills/semantic_analysis/measure_distance.py "Hello world" "שלום עולם"
+# Test translation
+python -c "
+from deep_translator import GoogleTranslator
+translator = GoogleTranslator(source='en', target='fr')
+result = translator.translate('Hello world')
+print(f'Translation: {result}')
+"
 
-# With verbose output
-python .claude/skills/semantic_analysis/measure_distance.py \
-    --file1 /tmp/original_sentence.txt \
-    --file2 /tmp/third_hop_translation.md \
-    --verbose
+# Test embeddings
+python -c "
+from embedding_utils import compute_embedding, cosine_distance
+emb1 = compute_embedding('Hello world')
+emb2 = compute_embedding('Bonjour le monde')
+distance = cosine_distance(emb1, emb2)
+print(f'Semantic distance: {distance:.4f}')
+"
 ```
 
 ---
@@ -243,41 +312,56 @@ python .claude/skills/semantic_analysis/measure_distance.py \
 
 ```
 .
-├── .claude/
-│   ├── main.claude                              # Main orchestrator agent
+├── README.md                                     # This file
+├── requirements.txt                              # Python dependencies
+├── run_experiment.py                             # Automated batch experiment
+│
+├── .claude/                                      # Multi-agent system (for user input)
+│   ├── main.claude                               # Main orchestrator agent
 │   │
 │   ├── agents/
-│   │   ├── translator_1.claude                  # English → French
-│   │   ├── translator_2.claude                  # French → Spanish
-│   │   ├── translator_3.claude                  # Spanish → Hebrew
-│   │   └── embedding_analyzer.claude            # Semantic distance analyzer
+│   │   ├── translator_1.claude                   # English → French
+│   │   ├── translator_2.claude                   # French → Italian
+│   │   ├── translator_3.claude                   # Italian → Spanish
+│   │   └── embedding_analyzer.claude             # Semantic distance analyzer
 │   │
 │   ├── skills/
 │   │   ├── translate_language/
-│   │   │   └── SKILL.md                         # Translation skill documentation
+│   │   │   └── SKILL.md                          # Translation skill documentation
 │   │   │
-│   │   └── semantic_analysis/
-│   │       ├── compute_embeddings.py            # Embedding computation (Python)
-│   │       └── measure_distance.py              # Distance measurement (Python)
+│   │   ├── typo-injector/
+│   │   │   ├── typo_utils.py                     # Typo injection utilities
+│   │   │   └── SKILL.md                          # Typo injection documentation
+│   │   │
+│   │   ├── embeddings/
+│   │   │   ├── embedding_utils.py                # Embedding computation
+│   │   │   └── SKILL.md                          # Embedding documentation
+│   │   │
+│   │   └── chart-generator/
+│   │       ├── chart_utils.py                    # Visualization utilities
+│   │       └── SKILL.md                          # Chart generation documentation
 │   │
 │   └── settings.local.json                       # Local settings
 │
-├── requirements.txt                              # Python dependencies
-├── README.md                                     # This file
-└── run_experiment.py                             # Optional batch runner
-
-Temporary Files (created during execution):
-├── /tmp/original_sentence.txt                    # Saved by main orchestrator
-├── /tmp/first_hop_translation.md                 # Output of translator_1
-├── /tmp/second_hop_translation.md                # Output of translator_2
-└── /tmp/third_hop_translation.md                 # Output of translator_3
+├── results/                                      # Experiment outputs
+│   ├── experiment_summary.txt                    # Latest user input experiment
+│   ├── semantic_analysis.md                      # Detailed analysis
+│   ├── translation_flow.txt                      # Translation chain log
+│   ├── semantic_drift_chart.png                  # Automated experiment chart
+│   └── experiment_results.csv                    # Automated experiment data
+│
+└── tmp/                                          # Temporary files (created during execution)
+    ├── original_sentence.txt                     # Saved by main orchestrator
+    ├── first_hop_translation.md                  # Output of translator_1
+    ├── second_hop_translation.md                 # Output of translator_2
+    └── third_hop_translation.md                  # Output of translator_3
 ```
 
 ---
 
 ## Agent and Skill Descriptions
 
-### Agents
+### Agents (For User Input Experiments)
 
 #### 1. Main Orchestrator (`main.claude`)
 **Purpose**: Coordinates the entire workflow
@@ -313,8 +397,8 @@ Temporary Files (created during execution):
 
 **Responsibilities**:
 - Reads French text from `/tmp/first_hop_translation.md`
-- Translates French → Spanish using translate skill
-- Writes Spanish translation to `/tmp/second_hop_translation.md`
+- Translates French → Italian using translate skill
+- Writes Italian translation to `/tmp/second_hop_translation.md`
 
 **Input**: `/tmp/first_hop_translation.md`
 **Output**: `/tmp/second_hop_translation.md`
@@ -327,9 +411,9 @@ Temporary Files (created during execution):
 **Purpose**: Third and final hop in translation chain
 
 **Responsibilities**:
-- Reads Spanish text from `/tmp/second_hop_translation.md`
-- Translates Spanish → Hebrew using translate skill
-- Writes Hebrew translation to `/tmp/third_hop_translation.md`
+- Reads Italian text from `/tmp/second_hop_translation.md`
+- Translates Italian → Spanish using translate skill
+- Writes Spanish translation to `/tmp/third_hop_translation.md`
 
 **Input**: `/tmp/second_hop_translation.md`
 **Output**: `/tmp/third_hop_translation.md`
@@ -343,7 +427,7 @@ Temporary Files (created during execution):
 
 **Responsibilities**:
 - Reads original English sentence from `/tmp/original_sentence.txt`
-- Reads final Hebrew translation from `/tmp/third_hop_translation.md`
+- Reads final Spanish translation from `/tmp/third_hop_translation.md`
 - Calls `compute_embeddings.py` for both texts
 - Calls `measure_distance.py` to compute cosine distance
 - Interprets and reports results
@@ -355,9 +439,9 @@ Temporary Files (created during execution):
 
 ---
 
-### Skills
+### Skills & Utilities
 
-#### 1. Translation Skill (`skills/translate_language/SKILL.md`)
+#### 1. Translation (`skills/translate_language/SKILL.md`)
 **Purpose**: Translate text between languages
 
 **Technology**: Uses `deep-translator` library (Google Translate API)
@@ -373,7 +457,25 @@ Temporary Files (created during execution):
 
 ---
 
-#### 2. Compute Embeddings (`skills/semantic_analysis/compute_embeddings.py`)
+#### 2. Typo Injection (`typo_utils.py`)
+**Purpose**: Introduce spelling errors at specified rates
+
+**Technology**: Random character substitution, deletion, insertion
+
+**Input**: Clean text string, typo rate (0.0-1.0)
+**Output**: Text with introduced spelling errors
+
+**CLI Usage**:
+```python
+from typo_utils import introduce_typos
+corrupted = introduce_typos("Hello world", typo_rate=0.25)
+```
+
+**Used by**: Automated experiments
+
+---
+
+#### 3. Embedding Computation (`embedding_utils.py`)
 **Purpose**: Convert text to semantic vector representation
 
 **Technology**: Uses `sentence-transformers` library with `all-MiniLM-L6-v2` model
@@ -381,11 +483,9 @@ Temporary Files (created during execution):
 **Input**: Text string (any language)
 **Output**: 384-dimensional vector (normalized)
 
-**CLI Usage**:
-```bash
-python compute_embeddings.py "Your text here"
-python compute_embeddings.py --file input.txt --output embedding.json
-```
+**Functions**:
+- `compute_embedding(text)` - Single text to vector
+- `cosine_distance(emb1, emb2)` - Distance between vectors
 
 **What it does**:
 - Converts text into a mathematical vector
@@ -394,37 +494,37 @@ python compute_embeddings.py --file input.txt --output embedding.json
 
 ---
 
-#### 3. Measure Distance (`skills/semantic_analysis/measure_distance.py`)
-**Purpose**: Compute semantic distance between two texts or embeddings
+#### 4. Visualization (`chart_utils.py`)
+**Purpose**: Generate charts and save experimental results
 
-**Technology**: Uses cosine distance formula from `scipy`
+**Technology**: Uses `matplotlib` for plotting
 
-**Input**: Two text strings or embedding files
-**Output**: Distance value (0-2 scale)
+**Functions**:
+- `plot_typo_vs_distance()` - Scatter plot with trend line
+- `save_results_table()` - Export to CSV format
 
-**CLI Usage**:
-```bash
-python measure_distance.py "Text 1" "Text 2"
-python measure_distance.py --file1 text1.txt --file2 text2.txt --verbose
-python measure_distance.py --embedding1 emb1.json --embedding2 emb2.json
-```
+**Output**: PNG charts and CSV files
 
-**Distance Scale**:
-- **0.0 - 0.2**: Minimal drift (excellent preservation)
-- **0.2 - 0.4**: Low drift (good preservation)
-- **0.4 - 0.6**: Moderate drift (acceptable)
-- **0.6 - 0.8**: High drift (significant change)
-- **0.8+**: Severe drift (meaning largely lost)
+**Used by**: Automated experiments
 
 ---
 
 ## Experiment Configuration
 
-### Current Setup
+### User Input Experiments Configuration
+
+- **Original Language**: English
+- **Translation Chain**: English → French → Italian → Spanish
+- **Input Method**: Direct user input to Claude Code
+- **Typo Handling**: User provides pre-existing typos
+- **Communication**: File-based agent messaging
+
+### Automated Experiments Configuration
 
 - **Original Language**: English
 - **Translation Chain**: English → French → Spanish → Hebrew
-- **Typo Rates Tested**: 20%, 25%, 30%, 35%, 40%, 45%, 50% (7 data points)
+- **Typo Rates Tested**: 0%, 5%, 10%, 15%, 20%, 25% (6 data points)
+- **Typo Generation**: Automated using `typo_utils.py`
 - **Embedding Model**: all-MiniLM-L6-v2 (384 dimensions)
 - **Distance Metric**: Cosine distance
 
@@ -432,35 +532,31 @@ python measure_distance.py --embedding1 emb1.json --embedding2 emb2.json
 
 #### Change Translation Languages
 
-Edit the agent files to use different language codes:
-- `en` = English
-- `fr` = French
-- `es` = Spanish
-- `he` = Hebrew
-- `de` = German
-- `ja` = Japanese
-- `zh` = Chinese
-- `ar` = Arabic
-- `ru` = Russian
+**For User Input Experiments**: Edit the agent files to use different language codes
 
-Example: For English → German → Italian → Japanese:
-- Modify translator_1: `en` → `de`
-- Modify translator_2: `de` → `it`
-- Modify translator_3: `it` → `ja`
-
-#### Change Number of Hops
-
-To add a 4th translation hop:
-1. Create `agents/translator_4.claude` (copy and modify translator_3)
-2. Update translator_3 to write to `/tmp/third_hop_translation.md` instead of final
-3. Update translator_4 to read from translator_3 and write to `/tmp/fourth_hop_translation.md`
-4. Update embedding_analyzer to read from translator_4's output
-
-#### Change Typo Rates
-
-Modify the typo rates list in your experiment runner:
+**For Automated Experiments**: Edit `run_experiment.py`:
 ```python
-typo_rates = [0.10, 0.20, 0.30, 0.40, 0.50]  # Example: 10% to 50%
+translation_chain = [
+    ('en', 'de', 'English to German'),
+    ('de', 'ja', 'German to Japanese'),
+    ('ja', 'ar', 'Japanese to Arabic')
+]
+```
+
+#### Language Codes
+- `en` = English, `fr` = French, `es` = Spanish, `he` = Hebrew
+- `de` = German, `ja` = Japanese, `zh` = Chinese, `ar` = Arabic
+- `ru` = Russian, `it` = Italian, `pt` = Portuguese
+
+#### Change Number of Translation Hops
+
+**For User Input**: Create additional translator agents
+**For Automated**: Extend the `translation_chain` list
+
+#### Modify Typo Rates (Automated Only)
+
+```python
+typo_rates = [0.0, 0.10, 0.20, 0.30, 0.40, 0.50]  # 0% to 50%
 ```
 
 ---
@@ -486,8 +582,6 @@ Semantic distance measures how different two pieces of text are in meaning, not 
 
 ### Interpreting Your Results
 
-After running the experiment:
-
 **Low Distance (< 0.3)**:
 - Translation preserved meaning well
 - Spelling errors had minimal impact
@@ -512,60 +606,142 @@ Generally, you should observe:
 
 ---
 
-## Example Run
+## Example Runs
 
-### Input
+### Example 1: User Input Experiment
 
+**Input**:
 ```
-User: "Please analyze this sentence with 25% typos: 'The quik browwn fox jmps ovr the lazi dg'"
+User: "Please analyze this sentence with typos: 'The quik brown fox jumps ovr the lazi dog'"
 ```
 
-### Execution Flow
-
+**Execution Flow**:
 ```
 Main Orchestrator:
   ✓ Saved original sentence to /tmp/original_sentence.txt
   ✓ Launching translator_1...
 
 Translator 1 (English → French):
-  ✓ Received: "The quik browwn fox jmps ovr the lazi dg"
-  ✓ Translated: "Le renard brun rapide saute sur le chien paresseux"
+  ✓ Received: "The quik brown fox jumps ovr the lazi dog"
+  ✓ Translated: "Le renard brun rapide saute par-dessus le chien paresseux"
   ✓ Written to /tmp/first_hop_translation.md
 
-Translator 2 (French → Spanish):
+Translator 2 (French → Italian):
   ✓ Read from /tmp/first_hop_translation.md
-  ✓ Translated: "El zorro marrón rápido salta sobre el perro perezoso"
+  ✓ Translated: "La volpe marrone veloce salta sopra il cane pigro"
   ✓ Written to /tmp/second_hop_translation.md
 
-Translator 3 (Spanish → Hebrew):
+Translator 3 (Italian → Spanish):
   ✓ Read from /tmp/second_hop_translation.md
-  ✓ Translated: "השועל החום המהיר קופץ מעל הכלב העצלן"
+  ✓ Translated: "El zorro marron rapido salta sobre el perro perezoso"
   ✓ Written to /tmp/third_hop_translation.md
 
 Embedding Analyzer:
   ✓ Computing embeddings...
   ✓ Original: [384-dim vector]
   ✓ Final: [384-dim vector]
-  ✓ Distance: 0.3542
+  ✓ Distance: 0.7996
 
 ========================================
 SEMANTIC DRIFT ANALYSIS
 ========================================
 
 Original Sentence (English):
-"The quik browwn fox jmps ovr the lazi dg"
+"The quik brown fox jumps ovr the lazi dog"
 
-Final Translation (Hebrew):
-"השועל החום המהיר קופץ מעל הכלב העצלן"
+Final Translation (Spanish):
+"El zorro marron rapido salta sobre el perro perezoso"
 
-Semantic Distance: 0.3542
+Semantic Distance: 0.7996
 
 Interpretation:
-Result: Low drift (good preservation)
+Result: High drift (significant semantic change)
 
-The translation chain successfully preserved
-the core meaning despite 25% spelling errors.
+The translation chain shows substantial semantic drift.
+This reflects cross-lingual embedding differences and
+the compound effect of multiple translation hops.
 ========================================
+```
+
+### Example 2: Automated Batch Experiment
+
+**Command**:
+```bash
+python run_experiment.py
+```
+
+**Sample Output**:
+```
+================================================================================
+MULTI-HOP TRANSLATION EXPERIMENT WITH SPELLING ERROR INJECTION
+================================================================================
+
+Original Sentence (17 words):
+  'The quick brown fox jumps over the lazy dog in the beautiful sunny park'
+
+Translation Chain:
+  - English to French (en -> fr)
+  - French to Spanish (fr -> es)
+  - Spanish to Hebrew (es -> he)
+
+Typo Rates: ['0%', '5%', '10%', '15%', '20%', '25%']
+
+================================================================================
+
+Executing experiment for each typo rate...
+--------------------------------------------------------------------------------
+
+[Typo Rate: 0%]
+  Corrupted: 'The quick brown fox jumps over the lazy dog in the beautiful sunny park'
+    English to French: 'Le renard brun rapide saute par-dessus le chien paresseux dans le beau parc ensoleillé'
+    French to Spanish: 'El zorro marrón rápido salta sobre el perro perezoso en el hermoso parque soleado'
+    Spanish to Hebrew: 'השועל החום המהיר קופץ מעל הכלב העצלן בפארק השמשי היפה'
+  Semantic Distance: 0.2156
+
+[Typo Rate: 5%]
+  Corrupted: 'The quick brown fox jumpe over the lazy dog in the beautiful sunny park'
+    English to French: 'Le renard brun rapide saute par-dessus le chien paresseux dans le beau parc ensoleillé'
+    French to Spanish: 'El zorro marrón rápido salta sobre el perro perezoso en el hermoso parque soleado'
+    Spanish to Hebrew: 'השועל החום המהיר קופץ מעל הכלב העצלן בפארק השמשי היפה'
+  Semantic Distance: 0.2189
+
+[...continues for all typo rates...]
+
+================================================================================
+EXPERIMENT COMPLETE
+================================================================================
+
+Generating visualizations and saving results...
+  Chart saved: results/semantic_drift_chart.png
+  Data saved: results/experiment_results.csv
+
+================================================================================
+SUMMARY STATISTICS
+================================================================================
+
+Semantic Distance Statistics:
+  Minimum: 0.2156
+  Maximum: 0.3421
+  Average: 0.2734
+  Range: 0.1265
+
+  Drift Increase (0% to 25% typos): 0.1265 (58.7%)
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+  Pattern: Semantic distance increases monotonically with typo rate
+  Largest semantic shift: Between 20% and 25% typo rates (+0.0542)
+  Translation Chain: English -> French -> Spanish -> Hebrew
+  Each translation hop compounds the semantic drift from spelling errors
+  Higher typo rates in the initial sentence lead to greater cumulative drift
+
+================================================================================
+
+Experiment complete!
+  Chart: results/semantic_drift_chart.png
+  Data: results/experiment_results.csv
 ```
 
 ---
@@ -584,7 +760,7 @@ pip install deep-translator
 - Check internet connection
 - Google Translate API is free but has rate limits
 
-**3. Hebrew Text Appears Garbled**
+**3. Hebrew/Unicode Text Appears Garbled**
 - Ensure your terminal supports UTF-8 encoding
 - Use a font that includes Hebrew characters (Arial, Courier New)
 - Check that files are saved with UTF-8 encoding
@@ -599,6 +775,11 @@ pip install deep-translator
 - Check that each agent completed successfully
 - On Windows, files may be in `C:\tmp\` instead of `/tmp/`
 
+**6. Automated Experiment Fails**
+- Check Python path and dependencies
+- Verify `run_experiment.py` has access to utility modules
+- Ensure `results/` directory is writable
+
 ---
 
 ## Academic Context
@@ -612,6 +793,7 @@ This project demonstrates:
 4. **NLP pipeline design**: Translation → embedding → analysis
 5. **Semantic evaluation**: Using embeddings to measure quality
 6. **Error propagation**: How noise compounds through transformations
+7. **Experimental design**: User input vs automated batch testing
 
 ### Research Questions
 
@@ -619,6 +801,7 @@ This project demonstrates:
 - Is the relationship linear or non-linear?
 - Do different language chains show different patterns?
 - At what typo rate does meaning break down completely?
+- How do multi-agent systems compare to monolithic approaches?
 
 ### Extensions
 
@@ -627,7 +810,35 @@ Possible project extensions:
 - Compare different embedding models (e.g., multilingual-BERT)
 - Add more translation hops (4, 5, 6 hops)
 - Inject different types of errors (grammar, punctuation, word order)
-- Create visualization dashboards with real-time updates
+- Create real-time visualization dashboards
+- Implement error recovery mechanisms
+- Add confidence scoring for translations
+
+---
+
+## Quick Start Commands
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Test translation
+python -c "from deep_translator import GoogleTranslator; print(GoogleTranslator(source='en', target='fr').translate('Hello world'))"
+
+# Test embeddings
+python -c "
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer('all-MiniLM-L6-v2')
+embedding = model.encode('Test sentence')
+print(f'Embedding shape: {embedding.shape}')
+"
+
+# Run automated experiment
+python run_experiment.py
+
+# Run user input experiment (within Claude Code)
+# Just ask Claude: "Run the translation drift experiment with this sentence: [your sentence]"
+```
 
 ---
 
@@ -642,28 +853,7 @@ Feel free to use and modify for educational purposes.
 
 Created as part of the MLDS program assignment on multi-agent systems.
 
-**Key Takeaway**: This project shows how Claude Code can orchestrate complex, multi-step workflows using autonomous agents that communicate through files. The separation between coordination (agents), translation (skills), and computation (Python) creates a modular, maintainable system.
-
----
-
-## Quick Start Commands
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Test translation
-python -c "from deep_translator import GoogleTranslator; print(GoogleTranslator(source='en', target='fr').translate('Hello world'))"
-
-# Test embeddings
-python .claude/skills/semantic_analysis/compute_embeddings.py "Test sentence"
-
-# Test distance measurement
-python .claude/skills/semantic_analysis/measure_distance.py "Hello world" "Bonjour le monde" --verbose
-
-# Run within Claude Code
-# Just ask Claude: "Run the translation drift experiment with this sentence: [your sentence]"
-```
+**Key Takeaway**: This project shows how multi-agent systems can handle complex, multi-step workflows with both interactive user input and automated batch processing. The separation between coordination (agents), translation (skills), computation (Python), and experimentation (automated scripts) creates a modular, maintainable system that supports both research and interactive exploration.
 
 ---
 

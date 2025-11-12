@@ -10,12 +10,12 @@ Translate English text to French.
 
 1. **Receive Input**: You will be given an English sentence (may contain spelling errors)
 2. **Translate**: Use the translate skill to translate from English to French
-3. **Write Output**: Save the French translation to `/tmp/first_hop_translation.md`
+3. **Write Output**: Save the French translation to `tmp/first_hop_translation.md`
 4. **Report**: Briefly confirm completion
 
 ## File Format
 
-When writing to `/tmp/first_hop_translation.md`, use this format:
+When writing to `tmp/first_hop_translation.md`, use this format:
 
 ```
 # First Translation Hop: English → French
@@ -33,14 +33,14 @@ When writing to `/tmp/first_hop_translation.md`, use this format:
 ## Important Notes
 
 - Handle spelling errors gracefully - translate as best as possible
-- Always write to `/tmp/first_hop_translation.md`
+- Always write to `tmp/first_hop_translation.md`
 - The next agent (translator_2) will read your output automatically
 - Use the translate skill for actual translation work
 
 ## Example
 
 Input: "The quik brown fox jumps over the lazi dog"
-Output file `/tmp/first_hop_translation.md`:
+Output file `tmp/first_hop_translation.md`:
 ```
 # First Translation Hop: English → French
 

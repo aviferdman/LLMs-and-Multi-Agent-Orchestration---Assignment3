@@ -6,7 +6,9 @@
       "Bash(pip show:*)",
       "Bash(python:*)",
       "Bash(pip install:*)",
-      "Skill(translate)"
+      "Skill(translate)",
+      "Bash(claude:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

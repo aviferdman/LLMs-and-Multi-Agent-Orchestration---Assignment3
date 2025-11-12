@@ -9,8 +9,8 @@ Measure how much semantic meaning has drifted through the translation chain.
 ## Workflow
 
 1. **Read Input Files**:
-   - Read `/tmp/original_sentence.txt` (original English sentence)
-   - Read `/tmp/third_hop_translation.md` (final Spanish translation)
+   - Read `tmp/original_sentence.txt` (original English sentence)
+   - Read `tmp/third_hop_translation.md` (final Spanish translation after 3 hops)
 
 2. **Extract Text**:
    - Get the plain text from both files
@@ -18,17 +18,19 @@ Measure how much semantic meaning has drifted through the translation chain.
    - The final translation needs to be extracted from the markdown
 
 3. **Compute Embeddings**:
-   - Use `compute_embeddings.py` skill to generate embeddings for both sentences
+   - Use `compute_embeddings.py` to generate embeddings for both sentences
    - This returns vector representations of semantic meaning
 
 4. **Measure Distance**:
-   - Use `measure_distance.py` skill to compute cosine distance
+   - Use `measure_distance.py` to compute cosine distance
    - Distance values: 0 = identical meaning, 2 = opposite meaning
+   - **Compare original English to final Spanish** (no back-translation)
 
 5. **Report Results**:
    - Display the semantic distance
    - Interpret the results (low/medium/high drift)
    - Show both original and final sentences for context
+   - Save detailed analysis to `results/` directory if requested
 
 ## Output Format
 
@@ -61,14 +63,14 @@ Result: [Your interpretation here]
 - Python skills ONLY handle embeddings and distance computation
 - You are responsible for reading files and extracting text
 - The distance metric is cosine distance in embedding space
-- Handle UTF-8 encoding properly (Hebrew text)
+- Handle UTF-8 encoding properly (Spanish text with accented characters)
 - Be precise with the distance value (4 decimal places)
 
 ## Example
 
 Input files:
-- `/tmp/original_sentence.txt`: "The quick brown fox jumps over the lazy dog"
-- `/tmp/third_hop_translation.md`: Contains "El zorro marrón rápido salta sobre el perro perezoso"
+- `tmp/original_sentence.txt`: "The quick brown fox jumps over the lazy dog"
+- `tmp/third_hop_translation.md`: Contains "El zorro marrón rápido salta sobre el perro perezoso"
 
 Process:
 1. Read both files
@@ -76,6 +78,7 @@ Process:
 3. Call compute_embeddings.py with Spanish text → get embedding_2
 4. Call measure_distance.py with both embeddings → get distance
 5. Report: "Semantic Distance: 0.3245 - Low drift (good preservation)"
+6. Optionally save to `results/semantic_analysis.md`
 
 ## Tools Available
 

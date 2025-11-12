@@ -6,14 +6,14 @@ allowed-tools: Bash
 
 # Translate Skill
 
-This skill translates text between different languages using the deep-translator library.
+This skill translates text between different languages using Claude's native translation capabilities or direct API calls.
 
 ## Instructions
 
 To translate text:
 1. Accept the text to translate, source language, and target language as parameters
-2. Use the deep-translator library's GoogleTranslator
-3. Return the translated text
+2. Use Claude's multilingual understanding to translate the text directly
+3. Return the translated text accurately
 
 ## Supported Languages
 
@@ -30,15 +30,13 @@ Common language codes:
 - `ja` - Japanese
 - `ar` - Arabic
 
-## Python Code Example
+## Implementation
 
-```python
-from deep_translator import GoogleTranslator
-
-def translate_text(text, source_lang='en', target_lang='fr'):
-    translator = GoogleTranslator(source=source_lang, target=target_lang)
-    return translator.translate(text)
-```
+Use Claude's native multilingual capabilities to:
+- Read the input text in the source language
+- Understand its semantic meaning
+- Generate an accurate translation in the target language
+- Preserve the meaning while adapting to target language conventions
 
 ## Usage Example
 
@@ -49,7 +47,8 @@ Output: "Le rapide renard brun saute par-dessus le chien paresseux"
 
 ## Notes
 
-- The skill requires the `deep-translator` package to be installed
-- Translation quality depends on the Google Translate API
-- Very long texts may need to be split into chunks
-- Some languages may not preserve formatting or special characters
+- Translation quality leverages Claude's multilingual training
+- Very long texts may need to be handled carefully
+- Some languages may have different conventions for formatting
+- Handle right-to-left languages (Hebrew, Arabic) with proper encoding
+- **NO PYTHON CODE** - Use Claude's native translation capabilities only

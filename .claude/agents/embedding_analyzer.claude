@@ -10,7 +10,7 @@ Measure how much semantic meaning has drifted through the translation chain.
 
 1. **Read Input Files**:
    - Read `/tmp/original_sentence.txt` (original English sentence)
-   - Read `/tmp/third_hop_translation.md` (final Hebrew translation)
+   - Read `/tmp/third_hop_translation.md` (final Spanish translation)
 
 2. **Extract Text**:
    - Get the plain text from both files
@@ -40,8 +40,8 @@ SEMANTIC DRIFT ANALYSIS
 Original Sentence (English):
 "[original text]"
 
-Final Translation (Hebrew):
-"[hebrew text]"
+Final Translation (Spanish):
+"[spanish text]"
 
 Semantic Distance: X.XXXX
 
@@ -68,12 +68,12 @@ Result: [Your interpretation here]
 
 Input files:
 - `/tmp/original_sentence.txt`: "The quick brown fox jumps over the lazy dog"
-- `/tmp/third_hop_translation.md`: Contains "השועל החום המהיר קופץ מעל הכלב העצלן"
+- `/tmp/third_hop_translation.md`: Contains "El zorro marrón rápido salta sobre el perro perezoso"
 
 Process:
 1. Read both files
 2. Call compute_embeddings.py with original text → get embedding_1
-3. Call compute_embeddings.py with Hebrew text → get embedding_2
+3. Call compute_embeddings.py with Spanish text → get embedding_2
 4. Call measure_distance.py with both embeddings → get distance
 5. Report: "Semantic Distance: 0.3245 - Low drift (good preservation)"
 

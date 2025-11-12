@@ -16,9 +16,9 @@ When the user provides an English sentence (which may contain up to 25% spelling
 2. **Initiate Translation Chain**:
    - Pass the sentence to translator_1 agent (English → French)
    - translator_1 will write its output to `/tmp/first_hop_translation.md`
-   - translator_2 will automatically read that file and translate (French → Spanish)
+   - translator_2 will automatically read that file and translate (French → Italian)
    - translator_2 will write its output to `/tmp/second_hop_translation.md`
-   - translator_3 will automatically read that file and translate (Spanish → Hebrew)
+   - translator_3 will automatically read that file and translate (Italian → Spanish)
    - translator_3 will write its output to `/tmp/third_hop_translation.md`
 
 3. **Invoke Embedding Analysis**:

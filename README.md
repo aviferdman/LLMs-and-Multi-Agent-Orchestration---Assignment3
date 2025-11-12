@@ -19,7 +19,7 @@
 
 This project demonstrates **multi-agent orchestration** with Claude Code to measure semantic drift caused by spelling errors across multiple language translations. It showcases how autonomous agents can communicate through files and coordinate complex workflows.
 
-**Key Concept**: When text with spelling errors is translated through multiple languages (English → French → Spanish → Hebrew), how much does the semantic meaning change?
+**Key Concept**: When text with spelling errors is translated through multiple languages (English → French → Italian → Spanish), how much does the semantic meaning change?
 
 ---
 

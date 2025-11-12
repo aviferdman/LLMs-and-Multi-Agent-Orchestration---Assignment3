@@ -1,0 +1,18 @@
+# Translation Experiment Dependencies
+
+# For text translation
+deep-translator>=1.11.4
+
+# For semantic embeddings
+sentence-transformers>=2.2.2
+torch>=2.0.0
+
+# For numerical operations and distance calculations
+numpy>=1.24.0
+scipy>=1.10.0
+
+# For visualization
+matplotlib>=3.7.0
+
+# Optional: Additional NLP utilities
+transformers>=4.30.0

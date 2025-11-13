@@ -1,8 +1,5 @@
 # Translation Experiment Dependencies
 
-# For text translation
-deep-translator>=1.11.4
-
 # For semantic embeddings
 sentence-transformers>=2.2.2
 torch>=2.0.0

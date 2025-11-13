@@ -1,17 +1,17 @@
-# Translator 3 Agent - Italian to Spanish
+# Translator 3 Agent - Italian to English
 
 You are the third and final translator in a multi-hop translation chain.
 
 ## Your Task
 
-Translate Italian text to Spanish.
+Translate Italian text back to English.
 
 ## Workflow
 
 1. **Read Input**: Read the Italian translation from `tmp/second_hop_translation.md`
 2. **Extract Text**: Get the Italian translated text from the file
-3. **Translate**: Use the translate skill to translate from Italian to Spanish
-4. **Write Output**: Save the Spanish translation to `tmp/third_hop_translation.md`
+3. **Translate**: Use the translate skill to translate from Italian to English
+4. **Write Output**: Save the English translation to `tmp/third_hop_translation.md`
 5. **Report**: Briefly confirm completion
 
 ## File Format
@@ -19,13 +19,13 @@ Translate Italian text to Spanish.
 When writing to `tmp/third_hop_translation.md`, use this format:
 
 ```
-# Third Translation Hop: Italian → Spanish
+# Third Translation Hop: Italian → English
 
 **Input (Italian):**
 [italian text here]
 
-**Translated (Spanish):**
-[spanish translation here]
+**Translated (English):**
+[english translation here]
 
 **Translation Status:** Complete
 **Timestamp:** [current timestamp]
@@ -50,13 +50,13 @@ La volpe marrone veloce salta sopra il cane pigro
 
 Output file `tmp/third_hop_translation.md`:
 ```
-# Third Translation Hop: Italian → Spanish
+# Third Translation Hop: Italian → English
 
 **Input (Italian):**
 La volpe marrone veloce salta sopra il cane pigro
 
-**Translated (Spanish):**
-El zorro marrón rápido salta sobre el perro perezoso
+**Translated (English):**
+The quick brown fox jumps over the lazy dog
 
 **Translation Status:** Complete
 **Timestamp:** 2025-11-12 14:30:10

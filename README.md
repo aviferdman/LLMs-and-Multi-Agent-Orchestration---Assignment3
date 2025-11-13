@@ -30,11 +30,21 @@ This project demonstrates **multi-agent orchestration** with semantic drift meas
 
 Imagine you have a sentence in English, but some words are misspelled. You translate it to French, then to Italian, then back to English. When you compare the final English translation to the original English (using semantic embeddings), how different is the meaning?
 
-This project **automates that entire process** using:
-- **Multiple Claude agents** that handle translations autonomously
-- **File-based communication** between agents
-- **Python scripts** ONLY for mathematical computations (embeddings, distances)
-- **Claude translation skills** for language conversion (NOT Python)
+This project **automates that entire process** using a clear separation of responsibilities:
+
+**Claude LLM handles:**
+- Sentence generation (creating original English sentences >15 words)
+- Typo injection (manually introducing spelling errors at 20-50% rates)
+- Translation coordination (via autonomous Claude agents)
+- Qualitative analysis (observing semantic drift, meaning changes)
+- Report generation (comprehensive markdown with tables and insights)
+
+**Python handles (ONLY at the end):**
+- Embedding computation (converting text to 384-dim vectors)
+- Distance calculation (cosine distance between embeddings)
+- Graph generation (matplotlib visualizations)
+
+**Key principle:** Claude does all the language work; Python does all the math.
 
 The result is a measurement of **semantic drift** - how far the meaning has drifted from the original.
 
@@ -192,14 +202,38 @@ Claude: [Activates multi-agent system, reports semantic distance]
 
 ### Automated Experiments
 
-**Purpose**: Systematic batch testing across multiple typo rates using Claude orchestration
+**Purpose**: Comprehensive systematic testing with full qualitative and quantitative analysis
 
-**How it works**:
-- Claude's `batch_experiment_orchestrator` agent runs autonomously
-- Generates typos at different rates (25%, 30%, 35%, 40%, 45%, 50%)
-- Runs complete translation chain for each typo rate (3 iterations per rate = 18 total)
-- Produces statistical analysis and comprehensive reports
-- All orchestration handled by Claude agents, not Python scripts
+**Requirements**:
+- **Sentence length:** >15 words each
+- **Typo rates:** 20%, 25%, 30%, 35%, 40%, 45%, 50%
+- **Samples:** 3 unique sentences per typo rate = **21 total sentences**
+
+**How it works** (4-Phase Process):
+
+**Phase 1: Sentence Generation (Claude ONLY)**
+- Claude creates 21 distinct English sentences covering varied topics
+- Each sentence >15 words with rich semantic content
+- Claude manually introduces typos at specified rates
+- NO Python involvement in this phase
+
+**Phase 2: Translation Processing (Claude Agents)**
+- Each sentence runs through 3-hop translation chain
+- All 21 sentences processed (63 translation operations total)
+- Intermediate translations documented
+- Qualitative observations noted (semantic drift, meaning preservation)
+
+**Phase 3: Qualitative Report (Claude ONLY)**
+- Comprehensive markdown report with ALL 21 sentences
+- Structured table: original, corrupted, translations, observations
+- Typo-level analysis and stability metrics
+- Conceptual graph description (expected patterns)
+- Insights and conclusions
+
+**Phase 4: Quantitative Analysis (Python ONLY)**
+- Calculate 21 embedding distances
+- Generate matplotlib graph
+- Append numerical data to existing report
 
 **Best for**:
 - Scientific analysis of typo rate vs semantic drift

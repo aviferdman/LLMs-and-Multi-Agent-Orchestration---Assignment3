@@ -34,26 +34,44 @@ English → French → Italian → English (3 hops, ends back in English)
    - Summary statistics
 
 ### Automated Mode
-**Trigger**: Keywords like "automated", "batch experiment", "multiple typo rates", "0-50%"
+**Trigger**: Keywords like "automated", "batch experiment", "multiple typo rates", "run experiment"
+
+**IMPORTANT**: All sentence generation and typo injection is done by CLAUDE (you), NOT Python.
 
 **Workflow**:
-1. Generate base sentence (~15 words)
-2. For each typo rate (0%, 10%, 20%, 25%, 30%, 35%, 40%, 45%, 50%):
-   - Generate typo-injected sentences using typo-injector skill
-   - For each iteration (3 per rate):
-     - Save typo sentence to `tmp/input_sentence.txt`
-     - Save original to `tmp/original_sentence.txt`
-     - Launch translator_1 agent
-     - Launch translator_2 agent
-     - Launch translator_3 agent
-     - Call `python calculate_distance.py "original" "final"`
-     - Record distance
-3. Generate consolidated report with:
-   - Original sentence and length
-   - Agent skill descriptions
-   - Table: typo_rate, avg_distance, min, max, std
-   - Graph: X-axis = typo %, Y-axis = distance
-   - Statistical analysis
+1. **Generate Sentences** (CLAUDE ONLY - NO PYTHON):
+   - Create 7 distinct English sentences (>15 words each)
+   - Topics: varied (daily life, science, technology, nature, etc.)
+   - For each typo rate (20%, 25%, 30%, 35%, 40%, 45%, 50%):
+     - Generate 3 DIFFERENT sentences
+     - Manually introduce typos at the specified rate
+     - Count words, count typos, calculate percentage
+     - Keep both original and corrupted versions
+
+2. **Process Each Sentence**:
+   - Display: original, corrupted, word count, typo count, typo %
+   - Save corrupted to `tmp/input_sentence.txt`
+   - Save original to `tmp/original_sentence.txt`
+   - Launch translator_1 (EN→FR)
+   - Launch translator_2 (FR→IT)
+   - Launch translator_3 (IT→EN)
+   - Extract final English
+   - Document intermediate translations
+   - Note qualitative observations (semantic drift, meaning changes)
+
+3. **Create Comprehensive Report** (ALL BY CLAUDE):
+   - Structured table: all sentences with stats
+   - For each typo level: average stability/consistency
+   - Conceptual graph description (how typo % affects quality)
+   - Qualitative analysis and insights
+   - ALL in ONE consolidated output file
+
+4. **Python Step (FINAL ONLY)**:
+   - AFTER report is complete
+   - For each sentence pair, call: `python calculate_distance.py "original" "final"`
+   - Collect all distances
+   - Generate quantitative graph using matplotlib
+   - Append to existing report
 
 ## Agent Details
 
@@ -158,12 +176,31 @@ You:
 
 ## Important Rules
 
-- Translation is done by AGENTS, not Python
-- Python is ONLY for embeddings and distance calculation
-- Always use the typo-injector skill for generating typos (don't do it manually)
-- Always provide the graph for automated mode
-- Always include agent skill descriptions in reports
-- Save all outputs to `results/` directory
+### Separation of Responsibilities
+
+**CLAUDE (YOU) handles:**
+- Sentence generation (create original English sentences >15 words)
+- Typo injection (manually introduce spelling errors at specified rates)
+- Translation (via agents: translator_1, translator_2, translator_3)
+- Qualitative analysis (semantic drift observations, meaning changes)
+- Report generation (comprehensive markdown reports with tables)
+- Conceptual graph descriptions (describe expected patterns)
+
+**PYTHON handles (ONLY AT THE END):**
+- Embedding computation (convert text to 384-dim vectors)
+- Distance calculation (cosine distance between vectors)
+- Quantitative graph generation (matplotlib visualizations)
+
+### Critical Rules
+
+- ❌ DO NOT use Python for sentence generation
+- ❌ DO NOT use Python for typo injection
+- ❌ DO NOT use typo-injector skill - manually create typos
+- ✅ YOU (Claude) create all sentences and introduce typos
+- ✅ Translation via Claude agents (NOT Python)
+- ✅ Python ONLY for final distance calculations and graphs
+- ✅ All qualitative analysis by YOU (Claude)
+- ✅ Save all outputs to `results/` directory
 
 ## File Structure
 

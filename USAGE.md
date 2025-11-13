@@ -52,29 +52,127 @@ This system analyzes semantic drift through multi-hop translation with spelling 
 ---
 
 ### Automated Mode
-**When to use**: Test systematic experiments across multiple typo rates
+**When to use**: Systematic testing across multiple typo rates with comprehensive analysis
 
 **How to trigger**: Use keywords like:
 - "Run automated experiment"
-- "Test 0-50% typo rates"
+- "Test 20-50% typo rates"
 - "Batch experiment"
 
-**What happens**:
-1. System generates base sentence
-2. Creates typo-injected variants (0%, 10%, 20%, 25%, 30%, 35%, 40%, 45%, 50%)
-3. For each typo rate:
-   - Generates 3 different sentences
-   - Runs each through translation chain
-   - Calculates distances
-4. Aggregates statistics
-5. Generates graph and report
+**Requirements**:
+- Sentences: >15 words each
+- Typo rates: 20%, 25%, 30%, 35%, 40%, 45%, 50%
+- Samples: 3 sentences per typo rate (21 total sentences)
+
+**What happens** (Step-by-step):
+
+**Phase 1: Sentence Generation (Claude Only - NO Python)**
+1. Claude creates 21 unique English sentences (>15 words)
+2. Claude manually introduces typos at specified rates
+3. For each sentence:
+   - Original version documented
+   - Typo-injected version created
+   - Word count calculated
+   - Typo count calculated
+   - Percentage verified
+
+**Phase 2: Translation Processing (Claude Agents)**
+3. For each of the 21 sentences:
+   - Run through translator_1 (EN→FR)
+   - Run through translator_2 (FR→IT)
+   - Run through translator_3 (IT→EN)
+   - Document all intermediate translations
+   - Note qualitative observations (drift, meaning changes)
+
+**Phase 3: Report Generation (Claude Only)**
+4. Create comprehensive markdown report containing:
+   - Structured table: all 21 sentences with complete stats
+   - Typo level analysis: average stability per rate
+   - Conceptual graph description
+   - Qualitative insights and patterns
+   - ALL in ONE consolidated file
+
+**Phase 4: Quantitative Analysis (Python - FINAL STEP ONLY)**
+5. After report is complete:
+   - Call Python to calculate embedding distances (21 calculations)
+   - Generate quantitative graph (matplotlib)
+   - Append numerical data to report
 
 **Output**:
-- Comprehensive data table
-- Graph: Typo % vs Distance
-- Statistical analysis (avg, min, max, std)
+- Single comprehensive report with qualitative AND quantitative data
+- Graph embedded in report
+- Statistical tables
 - Agent descriptions
-- Consolidated report
+- Semantic drift analysis
+
+---
+
+## Architecture: Claude vs Python
+
+### What Claude Does (LLM Capabilities)
+
+**Sentence Creation:**
+- Generate original English sentences (>15 words)
+- Create varied content (science, daily life, technology, nature)
+- Ensure grammatical correctness and semantic richness
+
+**Typo Injection:**
+- Manually introduce spelling errors at precise rates (20%-50%)
+- Strategic placement (not all consecutive)
+- Character-level modifications (substitution, deletion, transposition)
+- Manual counting and verification
+
+**Translation:**
+- Coordinate translator agents (translator_1, translator_2, translator_3)
+- Handle file-based communication between agents
+- Extract and document intermediate translations
+
+**Qualitative Analysis:**
+- Observe semantic drift patterns
+- Note meaning preservation or loss
+- Identify translation artifacts
+- Describe qualitative trends
+
+**Report Writing:**
+- Create structured markdown reports
+- Build comprehensive tables
+- Write conceptual graph descriptions
+- Synthesize insights and conclusions
+
+### What Python Does (Mathematical Computation)
+
+**Embedding Calculation:**
+```python
+# sentence-transformers library
+embedding = model.encode(sentence)  # 384-dim vector
+```
+
+**Distance Measurement:**
+```python
+# Cosine distance calculation
+distance = 1 - cosine_similarity(emb1, emb2)
+```
+
+**Graph Generation:**
+```python
+# matplotlib visualization
+plt.plot(typo_rates, distances)
+plt.savefig('graph.png')
+```
+
+### Why This Separation?
+
+**Claude's Strengths:**
+- Natural language generation
+- Context understanding
+- Qualitative reasoning
+- Report synthesis
+
+**Python's Strengths:**
+- Numerical precision
+- Matrix operations
+- Statistical computation
+- Data visualization
 
 ---
 

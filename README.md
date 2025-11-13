@@ -134,7 +134,6 @@ User provides sentence with typos
 
 - Python 3.8 or higher
 - Claude Code CLI (for user input experiments)
-- Internet connection (for translation API)
 
 ### Step 1: Install Python Dependencies
 
@@ -143,20 +142,14 @@ pip install -r requirements.txt
 ```
 
 This installs:
-- `deep-translator` - Google Translate API wrapper
 - `sentence-transformers` - Semantic embedding models
 - `torch` - Deep learning framework (required by sentence-transformers)
 - `numpy` - Numerical computations
 - `scipy` - Distance calculations
-- `matplotlib` - Visualization (for automated experiments)
+- `matplotlib` - Visualization (for graphs)
 - `transformers` - NLP utilities
 
 ### Step 2: Verify Installation
-
-Test the translation library:
-```bash
-python -c "from deep_translator import GoogleTranslator; print('Translation: OK')"
-```
 
 Test the embeddings library:
 ```bash
@@ -302,8 +295,9 @@ User: "Calculate semantic distance between 'Hello world' and 'Bonjour le monde'"
 ```
 .
 ├── README.md                                     # This file
+├── USAGE.md                                      # Quick start guide
 ├── requirements.txt                              # Python dependencies
-├── run_experiment.py                             # Automated batch experiment
+├── calculate_distance.py                         # Semantic distance calculator (Python)
 │
 ├── .claude/                                      # Multi-agent system (for user input)
 │   ├── main.claude                               # Main orchestrator agent
@@ -431,19 +425,18 @@ User: "Calculate semantic distance between 'Hello world' and 'Bonjour le monde'"
 
 ### Skills & Utilities
 
-#### 1. Translation (`skills/translate_language/SKILL.md`)
+#### 1. Translation (`skills/translate/SKILL.md`)
 **Purpose**: Translate text between languages
 
-**Technology**: Uses `deep-translator` library (Google Translate API)
+**Technology**: Uses Claude's native multilingual capabilities
 
 **Capabilities**:
-- Supports 100+ languages
-- Handles text with spelling errors
+- Supports multiple languages
+- Handles text with spelling errors gracefully
 - Works with UTF-8 encoding (Hebrew, Arabic, Chinese, etc.)
+- No external API calls required
 
 **Usage**: Invoked by translator agents
-
-**Important**: Requires internet connection
 
 ---
 
@@ -659,9 +652,9 @@ the compound effect of multiple translation hops.
 
 ### Example 2: Automated Batch Experiment
 
-**Command**:
-```bash
-python run_experiment.py
+**Command** (via Claude Code):
+```
+User: "Run automated experiment"
 ```
 
 **Sample Output**:
@@ -744,35 +737,30 @@ Experiment complete!
 
 ### Common Issues
 
-**1. ModuleNotFoundError: No module named 'deep_translator'**
+**1. ModuleNotFoundError: No module named 'sentence_transformers'**
 ```bash
-pip install deep-translator
+pip install -r requirements.txt
 ```
 
-**2. Translation API Errors / Rate Limiting**
-- Wait a few seconds between requests
-- Check internet connection
-- Google Translate API is free but has rate limits
+**2. Translation Issues**
+- Claude handles translation natively
+- No external API or internet required for translation
+- Only embeddings require model download (first run only)
 
-**3. Hebrew/Unicode Text Appears Garbled**
-- Ensure your terminal supports UTF-8 encoding
-- Use a font that includes Hebrew characters (Arial, Courier New)
-- Check that files are saved with UTF-8 encoding
-
-**4. Model Download Delays**
+**3. Model Download Delays**
 - First run downloads the embedding model (~90MB)
 - This happens once; subsequent runs are fast
 - Ensure stable internet connection
 
-**5. File Not Found: /tmp/...**
+**4. File Not Found: /tmp/...**
 - Ensure agents ran in sequence
 - Check that each agent completed successfully
-- On Windows, files may be in `C:\tmp\` instead of `/tmp/`
+- Verify tmp/ directory exists in project root
 
-**6. Automated Experiment Fails**
+**5. Experiment Fails**
 - Check Python path and dependencies
-- Verify `run_experiment.py` has access to utility modules
 - Ensure `results/` directory is writable
+- Verify all agents completed their tasks
 
 ---
 
@@ -816,22 +804,17 @@ Possible project extensions:
 # Install dependencies
 pip install -r requirements.txt
 
-# Test translation
-python -c "from deep_translator import GoogleTranslator; print(GoogleTranslator(source='en', target='fr').translate('Hello world'))"
-
 # Test embeddings
-python -c "
-from sentence_transformers import SentenceTransformer
-model = SentenceTransformer('all-MiniLM-L6-v2')
-embedding = model.encode('Test sentence')
-print(f'Embedding shape: {embedding.shape}')
-"
+python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L6-v2'); print('Embeddings: OK')"
 
-# Run automated experiment
-python run_experiment.py
+# Test distance calculator
+python calculate_distance.py "Hello world" "Bonjour monde"
 
-# Run user input experiment (within Claude Code)
-# Just ask Claude: "Run the translation drift experiment with this sentence: [your sentence]"
+# Run manual mode experiment (within Claude Code)
+# Ask Claude: "Analyze this sentence: [your sentence with typos]"
+
+# Run automated experiment (within Claude Code)
+# Ask Claude: "Run automated experiment"
 ```
 
 ---

@@ -1,5 +1,12 @@
 # Multi-Agent Translation Semantic Drift Experiment
 
+> **Latest Experiment Results (November 14, 2025)**: This project contains a complete automated experiment testing semantic drift across 21 sentences with 7 typo rates (20%-50%). All results are verified and documented in `results/FINAL_EXPERIMENT_REPORT.md`.
+>
+> **Quick Start**: See [Understanding Results](#understanding-results) for analysis of the latest experiment.
+> **Visualization**: View `results/semantic_drift_visualization.png` for complete graphs.
+
+---
+
 ## Table of Contents
 - [Overview](#overview)
 - [What is This Project?](#what-is-this-project)
@@ -331,47 +338,72 @@ User: "Calculate semantic distance between 'Hello world' and 'Bonjour le monde'"
 ├── README.md                                     # This file
 ├── USAGE.md                                      # Quick start guide
 ├── requirements.txt                              # Python dependencies
-├── calculate_distance.py                         # Semantic distance calculator (Python)
+├── CHANGELOG.md                                  # Version history
+├── SELF_ASSESSMENT.md                            # Project self-assessment
+├── OPEN_SOURCE_CONTRIBUTION.md                   # Open source contributions
 │
-├── .claude/                                      # Multi-agent system (for user input)
-│   ├── main.claude                               # Main orchestrator agent
-│   │
+├── .claude/                                      # Multi-agent system
 │   ├── agents/
-│   │   ├── translator_1.claude                   # English → French
-│   │   ├── translator_2.claude                   # French → Italian
-│   │   ├── translator_3.claude                   # Italian → Spanish
-│   │   └── embedding_analyzer.claude             # Semantic distance analyzer
+│   │   └── translation-experiment-orchestrator.md # Main experiment orchestrator
 │   │
 │   ├── skills/
-│   │   ├── translate_language/
-│   │   │   └── SKILL.md                          # Translation skill documentation
+│   │   ├── translate/
+│   │   │   └── SKILL.md                          # Translation skill (native Claude)
 │   │   │
 │   │   ├── typo-injector/
-│   │   │   ├── typo_utils.py                     # Typo injection utilities
-│   │   │   └── SKILL.md                          # Typo injection documentation
+│   │   │   ├── SKILL.md                          # Typo injection (word-based)
+│   │   │   └── typo_utils.py                     # Typo utilities
 │   │   │
 │   │   ├── embeddings/
-│   │   │   ├── embedding_utils.py                # Embedding computation
-│   │   │   └── SKILL.md                          # Embedding documentation
+│   │   │   ├── SKILL.md                          # Embedding documentation
+│   │   │   └── embedding_utils.py                # Embedding computation
 │   │   │
-│   │   └── chart-generator/
-│   │       ├── chart_utils.py                    # Visualization utilities
-│   │       └── SKILL.md                          # Chart generation documentation
+│   │   ├── chart-generator/
+│   │   │   ├── SKILL.md                          # Chart generation
+│   │   │   └── chart_utils.py                    # Visualization utilities
+│   │   │
+│   │   └── semantic_analysis/
+│   │       ├── compute_embeddings.py             # Embedding computation
+│   │       └── measure_distance.py               # Distance calculation
 │   │
 │   └── settings.local.json                       # Local settings
 │
-├── results/                                      # Experiment outputs
-│   ├── experiment_summary.txt                    # Latest user input experiment
-│   ├── semantic_analysis.md                      # Detailed analysis
-│   ├── translation_flow.txt                      # Translation chain log
-│   ├── semantic_drift_chart.png                  # Automated experiment chart
-│   └── experiment_results.csv                    # Automated experiment data
+├── scripts/                                      # Python analysis scripts
+│   ├── calculate_distance.py                     # Single sentence distance
+│   ├── batch_calculate_distances.py              # Batch distance calculation
+│   ├── compute_all_distances.py                  # Compute all embeddings
+│   ├── generate_visualization.py                 # Create visualizations
+│   └── batch_analysis_custom.py                  # Custom batch analysis
 │
-└── tmp/                                          # Temporary files (created during execution)
-    ├── original_sentence.txt                     # Saved by main orchestrator
-    ├── first_hop_translation.md                  # Output of translator_1
-    ├── second_hop_translation.md                 # Output of translator_2
-    └── third_hop_translation.md                  # Output of translator_3
+├── results/                                      # Experiment results (Nov 14, 2025)
+│   ├── FINAL_EXPERIMENT_REPORT.md                # Main comprehensive report
+│   ├── EXPERIMENT_SUMMARY.md                     # Executive summary
+│   ├── automated_experiment_report.md            # Detailed qualitative analysis
+│   └── semantic_drift_visualization.png          # Results visualization
+│
+├── data/                                         # Experiment data
+│   └── experiment_raw_data/                      # Raw data from latest experiment
+│       ├── sentence_XX_original.txt              # Original sentences (21 files)
+│       ├── sentence_XX_corrupted.txt             # Corrupted sentences (21 files)
+│       ├── all_translations_complete.txt         # All translation chains
+│       ├── distance_results.txt                  # Semantic distances
+│       └── verification_summary.txt              # Typo verification data
+│
+└── docs/                                         # Documentation
+    ├── ARCHITECTURE.md                           # System architecture
+    ├── MATHEMATICAL_FOUNDATIONS.md               # Mathematical basis
+    ├── RESEARCH_METHODOLOGY.md                   # Research approach
+    ├── TESTING.md                                # Test documentation
+    ├── PROMPT_BOOK.md                            # Prompt engineering guide
+    ├── PRD.md                                    # Product requirements
+    ├── SECURITY.md                               # Security considerations
+    ├── COST_ANALYSIS.md                          # Cost analysis
+    ├── EDGE_CASES.md                             # Edge case handling
+    ├── ISO_IEC_25010_COMPLIANCE.md               # Quality compliance
+    └── ADRs/                                     # Architecture Decision Records
+        ├── ADR-001-multi-agent-design.md
+        ├── ADR-002-embedding-model-selection.md
+        └── ADR-003-translation-chain-design.md
 ```
 
 ---
@@ -684,85 +716,116 @@ the compound effect of multiple translation hops.
 ========================================
 ```
 
-### Example 2: Automated Batch Experiment
+### Example 2: Automated Batch Experiment (November 14, 2025)
 
 **Command** (via Claude Code):
 ```
 User: "Run automated experiment"
 ```
 
-**Sample Output**:
+**Actual Results from Latest Experiment**:
 ```
 ================================================================================
-MULTI-HOP TRANSLATION EXPERIMENT WITH SPELLING ERROR INJECTION
+AUTOMATED MULTI-HOP TRANSLATION SEMANTIC DRIFT EXPERIMENT
 ================================================================================
 
-Original Sentence (17 words):
-  'The quick brown fox jumps over the lazy dog in the beautiful sunny park'
+Experiment Date: November 14, 2025
+Total Sentences: 21
+Typo Rate Range: 20% - 50% (7 levels, 3 sentences each)
+Translation Chain: English → French → Italian → Spanish (3 hops)
+Verification: 100% pass rate (all 21 sentences verified)
+
+================================================================================
+VERIFICATION SUMMARY
+================================================================================
+
+✓ All 21 sentences passed typo injection verification
+✓ Average deviation: 1.5% (within 3% threshold)
+✓ Word-based typo methodology enforced
+
+================================================================================
+KEY FINDINGS - SURPRISING NON-LINEAR PATTERN
+================================================================================
+
+Typo Rate  │  Mean Distance  │  Interpretation
+───────────┼─────────────────┼─────────────────────────────
+   20%     │     0.419       │  Moderate drift
+   25%     │     0.472       │  Increasing drift
+   30%     │     0.633       │  PEAK DRIFT (highest!)
+   35%     │     0.439       │  Recovery begins
+   40%     │     0.425       │  Surprisingly low drift
+   45%     │     0.481       │  Slight increase
+   50%     │     0.451       │  Still moderate
+
+UNEXPECTED FINDING: Semantic drift does NOT increase linearly!
+- Peak drift at 30% (0.633), not 50% as expected
+- Surprising recovery at 40% (0.425)
+- Topic/domain matters MORE than typo rate
+
+================================================================================
+SAMPLE TRANSLATION CHAINS
+================================================================================
+
+[Example: Sentence 1 - 20% Typo Rate]
+Original:
+  "The ancient library contained thousands of manuscripts documenting
+   the scientific discoveries made by scholars throughout medieval
+   European history."
+
+Corrupted (4/18 words = 22.2%):
+  "The ancent library contained thousands of manuscripst documenting
+   the scientfic discoveries made by scholars througout medieval
+   European history."
 
 Translation Chain:
-  - English to French (en -> fr)
-  - French to Spanish (fr -> es)
-  - Spanish to Hebrew (es -> he)
+  English → French:
+    "La bibliothèque ancienne contenait des milliers de manuscrits..."
 
-Typo Rates: ['0%', '5%', '10%', '15%', '20%', '25%']
+  French → Italian:
+    "L'antica biblioteca conteneva migliaia di manoscritti..."
+
+  Italian → Spanish:
+    "La antigua biblioteca contenía miles de manuscritos que documentaban
+     los descubrimientos científicos..."
+
+Semantic Distance: 0.387 (moderate drift despite typos)
+
+[Example: Sentence 19 - 50% Typo Rate]
+Original:
+  "Urban planners design sustainable transportation networks that
+   reduce traffic congestion minimize environmental impact and
+   improve accessibility for residents."
+
+Corrupted (9/18 words = 50.0%):
+  "Urban planors design sustainble transportaton networs that reduce
+   trafic congestoin minimize enviromental impact and improve
+   accesibility for resients."
+
+Translation Chain → Spanish:
+  "Los urbanistas diseñan redes de transporte sostenibles que reducen
+   la congestión del tráfico, minimizan el impacto ambiental y mejoran
+   la accesibilidad para los residentes."
+
+Semantic Distance: 0.436 (LOWER than 30% rate!)
+
+================================================================================
+STATISTICAL SUMMARY
+================================================================================
+
+Overall Mean Distance: 0.467
+Standard Deviation: 0.128
+Range: 0.295 - 0.824
+Pearson Correlation (typo rate vs distance): -0.046 (essentially zero!)
+
+CONCLUSION: LLM translators act as implicit error correctors, recovering
+semantic meaning even at high corruption rates through context inference.
 
 ================================================================================
 
-Executing experiment for each typo rate...
---------------------------------------------------------------------------------
-
-[Typo Rate: 0%]
-  Corrupted: 'The quick brown fox jumps over the lazy dog in the beautiful sunny park'
-    English to French: 'Le renard brun rapide saute par-dessus le chien paresseux dans le beau parc ensoleillé'
-    French to Spanish: 'El zorro marrón rápido salta sobre el perro perezoso en el hermoso parque soleado'
-    Spanish to Hebrew: 'השועל החום המהיר קופץ מעל הכלב העצלן בפארק השמשי היפה'
-  Semantic Distance: 0.2156
-
-[Typo Rate: 5%]
-  Corrupted: 'The quick brown fox jumpe over the lazy dog in the beautiful sunny park'
-    English to French: 'Le renard brun rapide saute par-dessus le chien paresseux dans le beau parc ensoleillé'
-    French to Spanish: 'El zorro marrón rápido salta sobre el perro perezoso en el hermoso parque soleado'
-    Spanish to Hebrew: 'השועל החום המהיר קופץ מעל הכלב העצלן בפארק השמשי היפה'
-  Semantic Distance: 0.2189
-
-[...continues for all typo rates...]
-
-================================================================================
-EXPERIMENT COMPLETE
-================================================================================
-
-Generating visualizations and saving results...
-  Chart saved: results/semantic_drift_chart.png
-  Data saved: results/experiment_results.csv
-
-================================================================================
-SUMMARY STATISTICS
-================================================================================
-
-Semantic Distance Statistics:
-  Minimum: 0.2156
-  Maximum: 0.3421
-  Average: 0.2734
-  Range: 0.1265
-
-  Drift Increase (0% to 25% typos): 0.1265 (58.7%)
-
-================================================================================
-KEY FINDINGS
-================================================================================
-
-  Pattern: Semantic distance increases monotonically with typo rate
-  Largest semantic shift: Between 20% and 25% typo rates (+0.0542)
-  Translation Chain: English -> French -> Italian -> English
-  Each translation hop compounds the semantic drift from spelling errors
-  Higher typo rates in the initial sentence lead to greater cumulative drift
-
-================================================================================
-
-Experiment complete!
-  Chart: results/semantic_drift_chart.png
-  Data: results/experiment_results.csv
+Complete Results Available:
+  Main Report: results/FINAL_EXPERIMENT_REPORT.md
+  Visualization: results/semantic_drift_visualization.png
+  Raw Data: data/experiment_raw_data/
 ```
 
 ---

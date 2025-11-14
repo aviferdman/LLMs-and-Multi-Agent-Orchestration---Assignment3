@@ -8,7 +8,13 @@
       "Bash(pip install:*)",
       "Skill(translate)",
       "Bash(claude:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(mkdir:*)",
+      "Bash(test:*)",
+      "Bash(cat:*)",
+      "Bash(final_report_temp.md)",
+      "Bash(find:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

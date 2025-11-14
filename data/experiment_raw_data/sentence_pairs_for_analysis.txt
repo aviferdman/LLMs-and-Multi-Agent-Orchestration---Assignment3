@@ -1,0 +1,44 @@
+SENTENCE PAIRS FOR EMBEDDING ANALYSIS
+Format: sentence_id|typo_rate|original_english|final_spanish
+
+01|20|The ancent library contained thousands of manuscripst documenting the scientfic discoveries made by scholars througout medieval European history.|La antigua biblioteca contenía miles de manuscritos que documentaban los descubrimientos científicos realizados por los estudiosos a lo largo de la historia medieval europea.
+
+02|20|Modern artifical intelligence systems require massive computaional resources to process natural languae and generate coherent responses effectively.|Los sistemas modernos de inteligencia artificial requieren recursos computacionales masivos para procesar el lenguaje natural y generar respuestas coherentes de manera efectiva.
+
+03|20|Climate scientsts warn that rising ocean tempertures will fundmentally alter marine ecossystems and threaten coastal communities worldwide within decades.|Los científicos del clima advierten que el aumento de las temperaturas oceánicas alterará fundamentalmente los ecosistemas marinos y amenazará a las comunidades costeras de todo el mundo en las próximas décadas.
+
+04|25|The pharmaceuitcal company developed a revolutionery treatment protocol that signficantly improved patient outcomes for rare genetc disorders.|La empresa farmacéutica desarrolló un protocolo de tratamiento revolucionario que mejoró significativamente los resultados de los pacientes con trastornos genéticos raros.
+
+05|25|Digital transfomation initiatives enable organizatons to streamlne operations, enhance customer expereinces, and compete more effectvely in global markets.|Las iniciativas de transformación digital permiten a las organizaciones optimizar operaciones, mejorar las experiencias de los clientes y competir más efectivamente en los mercados globales.
+
+06|25|Archaeolgists discovered intrcate pottery fragments revealing sophistcated artistic techniques used by ancient civilzations in Mesoptamia thousands of years ago.|Los arqueólogos descubrieron fragmentos de cerámica intrincados que revelan técnicas artísticas sofisticadas utilizadas por las civilizaciones antiguas en Mesopotamia hace miles de años.
+
+07|30|Quantm computing represents a paradgim shift in information procesing that could revolutionze cryptography, drug discovery, and optimzation problems.|La computación cuántica representa un cambio de paradigma en el procesamiento de información que podría revolucionar la criptografía, el descubrimiento de fármacos y los problemas de optimización.
+
+08|30|The symphny orchestra performed an emotionaly powerful interpreation of classical compositons that captvated audiences throughout the entire evening.|La orquesta sinfónica interpretó de manera emocionalmente poderosa composiciones clásicas que cautivaron al público durante toda la velada.
+
+09|30|Sustainble agricuture practices focus on perserving soil health, reducing chemcal inputs, and maintaining biodiersity to ensure lon-term food security.|Las prácticas de agricultura sostenible se centran en preservar la salud del suelo, reducir los insumos químicos y mantener la biodiversidad para garantizar la seguridad alimentaria a largo plazo.
+
+10|35|Educatonal researchers emphsize the importance of personalizd learning approaches that acommodate diverse student needs and cognitve developmnt stages.|Los investigadores educativos enfatizan la importancia de los enfoques de aprendizaje personalizados que se adaptan a las diversas necesidades de los estudiantes y las etapas de desarrollo cognitivo.
+
+11|35|The internatonal trade agreement faclitates cros-border commerce by reducing tariffs and establising standardized regulaory frameworks for particpating nations.|El acuerdo comercial internacional facilita el comercio transfronterizo reduciendo los aranceles y estableciendo marcos regulatorios estandarizados para las naciones participantes.
+
+12|35|Renewble energy technolgies like solar panels and wind turbnes provide enviromentally friendly alteratives to fossil fuels for electrcity generaton.|Las tecnologías de energía renovable como los paneles solares y las turbinas eólicas proporcionan alternativas ecológicas a los combustibles fósiles para la generación de electricidad.
+
+13|40|Neuroscientsts investgate the complex neural mechansms underlying human consciousnes, memory formaton, and decisio-making proceses in the brain.|Los neurocientíficos investigan los mecanismos neuronales complejos que subyacen a la conciencia humana, la formación de la memoria y los procesos de toma de decisiones en el cerebro.
+
+14|40|The historcal novel vividy portrayd life during the industial revoluton, capturng the social upheaval and technologcal inovations of that era.|La novela histórica retrató vívidamente la vida durante la revolución industrial, capturando la agitación social y las innovaciones tecnológicas de esa época.
+
+15|40|Cybersecuity experts develop sophistcated encrypion protocols to protect sensitve financial data from unautorized access and malicous cyberattcks.|Los expertos en ciberseguridad desarrollan protocolos de cifrado sofisticados para proteger datos financieros sensibles del acceso no autorizado y ataques cibernéticos maliciosos.
+
+16|45|The wildife conservaton program succesfully restord endangerd species populatons through habitat preservaton and carefuly managed breeding initatives.|El programa de conservación de la vida silvestre restauró con éxito las poblaciones de especies en peligro a través de la preservación del hábitat y iniciativas de cría cuidadosamente gestionadas.
+
+17|45|Space exploraton missions gather valuabe scientfic data about planetray atmosphres, geologcal formations, and potental conditions for extraterrestial life.|Las misiones de exploración espacial recopilan datos científicos valiosos sobre atmósferas planetarias, formaciones geológicas y condiciones potenciales para la vida extraterrestre.
+
+18|45|The culnary traditon combines indigenus ingredents with modern cookng technques to create inovative dishes that celebate regional cultural heritge.|La tradición culinaria combina ingredientes indígenas con técnicas de cocina modernas para crear platos innovadores que celebran el patrimonio cultural regional.
+
+19|50|Urban planors design sustainble transportaton networs that reduce trafic congestoin, minimize enviromental impact, and improve accesibility for resients.|Los urbanistas diseñan redes de transporte sostenibles que reducen la congestión del tráfico, minimizan el impacto ambiental y mejoran la accesibilidad para los residentes.
+
+20|50|The medcal breakthrugh enabled doctrs to diagnse cardiovasculr diseases earlier and implemnt preventve interventons that signficantly reduce mortalty rates.|El avance médico permitió a los médicos diagnosticar enfermedades cardiovasculares antes e implementar intervenciones preventivas que reducen significativamente las tasas de mortalidad.
+
+21|50|Behaviorl psycholgists study how enviromental factors, social interacions, and cognitve biases influece human decisio-making pattrns in complex situatons.|Los psicólogos del comportamiento estudian cómo los factores ambientales, las interacciones sociales y los sesgos cognitivos influyen en los patrones de toma de decisiones humanas en situaciones complejas.

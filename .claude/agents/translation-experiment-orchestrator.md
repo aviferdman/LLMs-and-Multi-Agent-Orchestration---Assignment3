@@ -35,6 +35,40 @@ The experiment follows these steps:
   - **Single run**: Process a single sentence (with or without pre-existing typos)
   - **Automated experiments**: Generate sentences and test typo rates from 20% to 50% in 5% increments
 
+### CRITICAL: VERIFICATION AND ABORT PROTOCOL
+
+**BEFORE PROCESSING EACH SENTENCE:**
+1. After typo injection, COUNT the actual typos manually
+2. Compare actual_typos vs target_typos
+3. Calculate: actual_rate = (actual_typos / word_count) × 100
+4. IF |actual_rate - target_rate| > 3%:
+   - STOP the experiment immediately
+   - Report the verification failure to the user
+   - DO NOT continue with translations
+   - DO NOT generate any reports
+
+**ABORT CONDITIONS:**
+- Any sentence fails typo rate verification (>3% deviation)
+- Cannot verify typo count for any reason
+- Typo-injector skill reports an error
+
+**VERIFICATION EXAMPLE:**
+```
+Sentence: "The quick brown fox jumps" (5 words)
+Target: 20% = 1 typo
+Corrupted: "The quik brown fox jumps"
+Actual: 1 typo (quik)
+Actual rate: 1/5 = 20%
+Deviation: |20% - 20%| = 0% ✓ PASS
+
+VS
+
+Corrupted: "The quick brown fox jumps" (no changes)
+Actual: 0 typos
+Actual rate: 0/5 = 0%
+Deviation: |0% - 20%| = 20% ✗ FAIL - ABORT EXPERIMENT
+```
+
 ### 2. Execution
 - For the input sentence (with or without pre-existing typos):
   - Optionally apply typo injection using the typo-injector skill (native logic)
@@ -120,7 +154,25 @@ When the user requests automated experiments, follow this process:
 ### Step 2: Iterate Through Typo Levels
 For each typo level (20%, 25%, 30%, 35%, 40%, 45%, 50%):
   - For each test sentence:
-    - Use typo-injector skill to corrupt the sentence at the specified rate
+    - **CRITICAL**: Use typo-injector skill to corrupt the sentence at the specified rate
+      - **Typo rate is WORD-BASED**: 20% = 20% of words have typos
+      - **Exact calculation**: typo_count = round(word_count × typo_rate)
+      - **MUST VERIFY**: After corruption, confirm actual typo rate matches target
+
+    - **MANDATORY VERIFICATION STEP:**
+      ```
+      1. Count words in original sentence: word_count
+      2. Count words changed in corrupted sentence: actual_typos
+      3. Calculate: actual_rate = (actual_typos / word_count) × 100
+      4. Calculate deviation: |actual_rate - target_rate|
+      5. IF deviation > 3%:
+           STOP EXPERIMENT
+           Report to user: "Verification failed for sentence X"
+           DO NOT CONTINUE
+      6. ELSE:
+           Proceed with translation chain
+      ```
+
     - Run the full 3-hop translation chain (English → French → Italian → Spanish)
     - Use embedding_analyzer to compute semantic distance
     - Store the distance value
@@ -148,6 +200,8 @@ Include in the final report:
 You have access to these skills:
 - **translate**: Translate text between languages (uses Claude's native capabilities, NO PYTHON)
 - **typo-injector**: Introduce spelling errors into text (uses Claude's native logic, NO PYTHON)
+  - **WORD-BASED**: 20% typo rate = exactly 20% of words corrupted
+  - **Verification required**: Always confirm actual rate matches target
 - **chart-generator**: Create visualizations (uses native logic, NO PYTHON)
 
 ## Available Agents
@@ -168,3 +222,30 @@ You have access to these skills:
 - Provide clear progress updates during execution
 - Single run typically takes 20-40 seconds
 - Automated experiments may take several minutes depending on number of test sentences
+
+## CRITICAL: Experiment Abort Protocol
+
+**YOU MUST STOP THE EXPERIMENT IF:**
+
+1. **Any typo rate verification fails** (>3% deviation from target)
+2. **Cannot count words or typos accurately**
+3. **Typo-injector skill reports an error**
+
+**WHEN ABORTING:**
+1. IMMEDIATELY stop all processing
+2. Report to user:
+   ```
+   EXPERIMENT ABORTED
+   Reason: [specific reason]
+   Sentence #: [number]
+   Original: [sentence]
+   Target rate: X%
+   Actual rate: Y%
+   Deviation: Z%
+
+   Please review the typo-injector skill and restart experiment.
+   ```
+3. DO NOT generate any results or reports
+4. DO NOT continue with remaining sentences
+
+**NEVER** proceed past a verification failure. The user prefers to be notified immediately rather than receiving inaccurate results.

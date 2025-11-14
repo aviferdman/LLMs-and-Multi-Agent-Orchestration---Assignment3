@@ -1,0 +1,16 @@
+SENTENCE 01 - Translation Chain
+
+Original English:
+The ancient library contained thousands of manuscripts documenting the scientific discoveries made by scholars throughout medieval European history.
+
+Corrupted English (20% typos):
+The ancent library contained thousands of manuscripst documenting the scientfic discoveries made by scholars througout medieval European history.
+
+Hop 1 - French:
+La bibliothèque ancienne contenait des milliers de manuscrits documentant les découvertes scientifiques faites par les érudits tout au long de l'histoire médiévale européenne.
+
+Hop 2 - Italian:
+L'antica biblioteca conteneva migliaia di manoscritti che documentavano le scoperte scientifiche fatte dagli studiosi nel corso della storia medievale europea.
+
+Hop 3 - Spanish:
+La antigua biblioteca contenía miles de manuscritos que documentaban los descubrimientos científicos realizados por los estudiosos a lo largo de la historia medieval europea.

@@ -1,0 +1,16 @@
+SENTENCE 04 - Translation Chain
+
+Original English:
+The pharmaceutical company developed a revolutionary treatment protocol that significantly improved patient outcomes for rare genetic disorders.
+
+Corrupted English (25% typos):
+The pharmaceuitcal company developed a revolutionery treatment protocol that signficantly improved patient outcomes for rare genetc disorders.
+
+Hop 1 - French:
+L'entreprise pharmaceutique a développé un protocole de traitement révolutionnaire qui a considérablement amélioré les résultats des patients atteints de troubles génétiques rares.
+
+Hop 2 - Italian:
+L'azienda farmaceutica ha sviluppato un protocollo di trattamento rivoluzionario che ha notevolmente migliorato i risultati dei pazienti affetti da disturbi genetici rari.
+
+Hop 3 - Spanish:
+La empresa farmacéutica desarrolló un protocolo de tratamiento revolucionario que mejoró significativamente los resultados de los pacientes con trastornos genéticos raros.

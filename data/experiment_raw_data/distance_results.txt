@@ -1,0 +1,80 @@
+SEMANTIC DISTANCE RESULTS
+================================================================================
+
+Individual Sentence Results:
+--------------------------------------------------------------------------------
+Sentence 01 | 20% typos | Distance: 0.433148
+Sentence 02 | 20% typos | Distance: 0.439270
+Sentence 03 | 20% typos | Distance: 0.385284
+Sentence 04 | 25% typos | Distance: 0.593068
+Sentence 05 | 25% typos | Distance: 0.463744
+Sentence 06 | 25% typos | Distance: 0.359901
+Sentence 07 | 30% typos | Distance: 0.685558
+Sentence 08 | 30% typos | Distance: 0.824023
+Sentence 09 | 30% typos | Distance: 0.390907
+Sentence 10 | 35% typos | Distance: 0.307152
+Sentence 11 | 35% typos | Distance: 0.631901
+Sentence 12 | 35% typos | Distance: 0.377825
+Sentence 13 | 40% typos | Distance: 0.334788
+Sentence 14 | 40% typos | Distance: 0.294879
+Sentence 15 | 40% typos | Distance: 0.644306
+Sentence 16 | 45% typos | Distance: 0.533552
+Sentence 17 | 45% typos | Distance: 0.448569
+Sentence 18 | 45% typos | Distance: 0.460213
+Sentence 19 | 50% typos | Distance: 0.412904
+Sentence 20 | 50% typos | Distance: 0.543321
+Sentence 21 | 50% typos | Distance: 0.395854
+
+================================================================================
+
+Statistics by Typo Rate:
+--------------------------------------------------------------------------------
+
+20% Typo Rate:
+  Count: 3
+  Mean Distance: 0.419234
+  Min Distance: 0.385284
+  Max Distance: 0.439270
+  Individual: 0.4331, 0.4393, 0.3853
+
+25% Typo Rate:
+  Count: 3
+  Mean Distance: 0.472238
+  Min Distance: 0.359901
+  Max Distance: 0.593068
+  Individual: 0.5931, 0.4637, 0.3599
+
+30% Typo Rate:
+  Count: 3
+  Mean Distance: 0.633496
+  Min Distance: 0.390907
+  Max Distance: 0.824023
+  Individual: 0.6856, 0.8240, 0.3909
+
+35% Typo Rate:
+  Count: 3
+  Mean Distance: 0.438959
+  Min Distance: 0.307152
+  Max Distance: 0.631901
+  Individual: 0.3072, 0.6319, 0.3778
+
+40% Typo Rate:
+  Count: 3
+  Mean Distance: 0.424658
+  Min Distance: 0.294879
+  Max Distance: 0.644306
+  Individual: 0.3348, 0.2949, 0.6443
+
+45% Typo Rate:
+  Count: 3
+  Mean Distance: 0.480778
+  Min Distance: 0.448569
+  Max Distance: 0.533552
+  Individual: 0.5336, 0.4486, 0.4602
+
+50% Typo Rate:
+  Count: 3
+  Mean Distance: 0.450693
+  Min Distance: 0.395854
+  Max Distance: 0.543321
+  Individual: 0.4129, 0.5433, 0.3959

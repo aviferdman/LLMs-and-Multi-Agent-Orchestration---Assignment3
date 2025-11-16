@@ -1,72 +1,81 @@
-# Quick Start Guide
+# Usage Guide
 
-## Architecture Overview
+## Overview
 
-This system analyzes semantic drift through multi-hop translation with spelling errors.
+This system analyzes semantic drift through multi-hop translation with spelling errors using a multi-agent architecture.
 
 ### Translation Chain
 **English → French → Italian → English** (3 hops, ends back in English)
 
 ### Key Components
 
-1. **Claude Agents** (handle translations):
-   - `translator_1.claude`: English → French
-   - `translator_2.claude`: French → Italian
-   - `translator_3.claude`: Italian → English
+1. **Main Orchestrator** ([.claude/main.md](.claude/main.md)):
+   - Detects user intent (ad-hoc vs batch mode)
+   - Launches appropriate agents
+   - Coordinates workflow
 
-2. **Python Script** (ONLY for math):
-   - `calculate_distance.py`: Computes embeddings and distance
-   - **Does NOT handle translation**
+2. **Translation Agents**:
+   - [translator-1-en-fr](.claude/agents/translators/translator-1-en-fr.md): English → French
+   - [translator-2-fr-it](.claude/agents/translators/translator-2-fr-it.md): French → Italian
+   - [translator-3-it-en](.claude/agents/translators/translator-3-it-en.md): Italian → English
 
-3. **Main Orchestrator** (`main.claude`):
-   - Coordinates all agents
-   - Manages file communication
-   - Generates reports and graphs
+3. **Orchestrator Agents**:
+   - [translation-experiment-orchestrator](.claude/agents/orchestrators/translation-experiment-orchestrator.md): Manages single/batch experiments
+   - [embedding-analyzer](.claude/agents/orchestrators/embedding-analyzer.md): Computes semantic distance
+
+4. **Python Scripts** (ONLY for embeddings and math):
+   - `scripts/calculate_distance.py`: Computes embeddings and distance
+   - `scripts/batch_calculate_distances.py`: Batch processing and visualization
+   - **Does NOT handle translation or typo injection**
 
 ---
 
 ## Modes of Operation
 
 ### Ad-hoc Mode (Single Sentence)
-**When to use**: You want to analyze a single sentence
+**When to use**: Analyze a specific sentence
 
-**How to trigger**: Provide a sentence directly
-
-**Example**:
+**How to trigger**:
 ```
-"Analyze: The quik brown fox jumps ovr the lazi dog"
-"Translate this sentence: Hello world, how are you today?"
+Please analyze this sentence: 'The quik brown fox jumps ovr the lazi dog'
 ```
 
-**What happens**:
-1. Orchestrator saves your sentence to `tmp/original_sentence.txt`
-2. Launches translator_1 → saves to `tmp/first_hop_translation.md`
-3. Launches translator_2 → saves to `tmp/second_hop_translation.md`
-4. Launches translator_3 → saves to `tmp/third_hop_translation.md`
-5. Launches embedding-analyzer → calculates semantic distance
-6. Shows you the results immediately
+**What happens automatically**:
+1. Main orchestrator detects the request
+2. Launches translation-experiment-orchestrator agent
+3. That agent:
+   - Saves sentence to `tmp/original_sentence.txt` and `tmp/input_sentence.txt`
+   - Launches translator-1-en-fr → writes `tmp/first_hop_translation.md`
+   - Launches translator-2-fr-it → writes `tmp/second_hop_translation.md`
+   - Launches translator-3-it-en → writes `tmp/third_hop_translation.md`
+   - Launches embedding-analyzer → calculates semantic distance via Python
+4. Results displayed immediately
 
 **Output**:
 - Original sentence
 - Translation chain (EN→FR→IT→EN)
 - Final English translation
-- Semantic distance value
-- Interpretation (low/medium/high drift)
+- Semantic distance value (0-2 range)
+- Interpretation (minimal/low/moderate/high/severe drift)
 
 ---
 
-### Automated Mode
-**When to use**: Systematic testing across multiple typo rates with comprehensive analysis
+### Batch/Automated Mode
+**When to use**: Systematic testing across multiple typo rates with statistical analysis
 
-**How to trigger**: Use keywords like:
-- "Run automated experiment"
-- "Test 20-50% typo rates"
-- "Batch experiment"
+**How to trigger**:
+```
+Run automated experiment
+```
+or
+```
+Run batch experiment
+```
 
-**Requirements**:
+**Configuration**:
 - Sentences: >15 words each
-- Typo rates: 20%, 25%, 30%, 35%, 40%, 45%, 50%
-- Samples: 3 sentences per typo rate (21 total sentences)
+- Typo rates: 20%, 25%, 30%, 35%, 40%, 45%, 50% (7 levels)
+- Samples: 3 sentences per typo rate = 21 total sentences
 
 **What happens** (Step-by-step):
 
@@ -263,29 +272,31 @@ Custom typo range:
 ## Technical Details
 
 ### Translation
-- **Tool**: Google Translate API (via deep-translator)
-- **Handler**: Claude agents (NOT Python)
-- **Rate limiting**: 0.5s between calls
+- **Handler**: Claude's native multilingual capabilities via translate skill
+- **Languages**: English, French, Italian (extensible to others)
+- **Method**: Direct translation by Claude agents (no external API)
 
 ### Embeddings
 - **Model**: all-MiniLM-L6-v2 (sentence-transformers)
 - **Dimensions**: 384
 - **Distance metric**: Cosine distance
 - **Range**: 0 (identical) to 2 (opposite)
+- **Handled by**: Python scripts only
 
 ### Graph Generation
 - **Library**: matplotlib
-- **Format**: PNG (300 DPI)
-- **Style**: Scatter plot with trend line
+- **Format**: PNG
+- **Types**: Scatter plots, box plots, histograms
+- **Generated by**: `scripts/batch_calculate_distances.py`
 
 ---
 
 ## Common Issues
 
-### "Translation Failed"
-- Check internet connection
-- Google Translate may have rate limits
-- Wait a few seconds and retry
+### Translation Issues
+- Claude's translate skill should handle most cases
+- If translation seems incorrect, the agent may need clearer instructions
+- Check that the translate skill is available in .claude/skills/
 
 ### "Module not found"
 - Run: `pip install -r requirements.txt`
@@ -322,26 +333,32 @@ Custom typo range:
 ```
 USER REQUEST
     ↓
-MAIN ORCHESTRATOR (.claude/main.claude)
+MAIN ORCHESTRATOR (.claude/main.md)
     ↓
-[Detects mode: Manual or Automated]
+[Detects mode: Ad-hoc or Batch]
+    ↓
+TRANSLATION-EXPERIMENT-ORCHESTRATOR
     ↓
 ┌─────────────────────────────────────┐
 │  FOR EACH SENTENCE:                 │
 │                                     │
 │  1. Save to tmp/original_sentence.txt│
-│  2. Launch translator_1 (EN→FR)     │
-│  3. Launch translator_2 (FR→IT)     │
-│  4. Launch translator_3 (IT→EN)     │
-│  5. Call Python calculate_distance  │
+│  2. Launch translator-1-en-fr       │
+│  3. Launch translator-2-fr-it       │
+│  4. Launch translator-3-it-en       │
+│  5. Launch embedding-analyzer       │
+│     → Calls Python for distance     │
 │  6. Record result                   │
 └─────────────────────────────────────┘
     ↓
-GENERATE REPORT + GRAPH
+GENERATE REPORT
+(+ GRAPH for batch mode)
     ↓
 PRESENT RESULTS TO USER
 ```
 
 ---
 
-**Remember**: Translation = Claude Agents | Math = Python Script
+**Key Principle**:
+- Translation & Orchestration = Claude Agents
+- Embeddings & Distance Math = Python Scripts

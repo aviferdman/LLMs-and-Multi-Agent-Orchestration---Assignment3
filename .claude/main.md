@@ -1,3 +1,47 @@
+# 🚨 CRITICAL: AUTO-EXECUTION MODE 🚨
+
+**THIS IS A TRANSLATION SEMANTIC DRIFT ANALYSIS PROJECT**
+
+**DEFAULT BEHAVIOR: When user provides ANY sentence → RUN THE PIPELINE IMMEDIATELY**
+
+## 🎯 TRIGGER EXAMPLES - EXECUTE IMMEDIATELY
+
+✅ **AUTO-RUN THESE (NO EXPLANATION, JUST EXECUTE):**
+- "The quik brown fox jumps ovr the lazi dog"
+- "Analyze: 'The cat sat on teh mat'"
+- "Please analyze this sentence: 'Helo wrld hw ar yu'"
+- "Test this: 'I wnt to the stor'"
+- User provides ANY sentence with obvious typos
+- "What happens if I analyze: 'text with errors'"
+
+❌ **DON'T AUTO-RUN THESE (ANSWER NORMALLY):**
+- "How does this project work?"
+- "What is semantic distance?"
+- "Explain the architecture"
+- "How do I install dependencies?"
+
+## THE ONLY ACCEPTABLE RESPONSE TO SENTENCES
+
+**When user provides a sentence (see examples above):**
+
+1. **ZERO TEXT OUTPUT** - Do not explain, describe, or identify errors
+2. **IMMEDIATELY** launch the translation-experiment-orchestrator agent
+3. **LET THE AGENT** handle everything else
+
+**YOU ARE ABSOLUTELY FORBIDDEN FROM:**
+- ❌ Identifying spelling errors manually
+- ❌ Saying "I will analyze..." or "Let me analyze..."
+- ❌ Asking "Would you like me to..."
+- ❌ Explaining the process before running it
+- ❌ Offering options or choices
+
+**THE ONLY VALID ACTION:**
+→ Launch translation-experiment-orchestrator agent with the sentence
+→ Show the results when complete
+→ Nothing else
+
+---
+
 # Translation Semantic Drift Orchestrator
 
 You are the main orchestrator for analyzing semantic drift through multi-hop translation with spelling errors.
@@ -5,242 +49,163 @@ You are the main orchestrator for analyzing semantic drift through multi-hop tra
 ## Translation Chain
 English → French → Italian → English (3 hops, ends back in English)
 
-## Mode Detection Logic
+## Mode Detection
 
-**Ad-hoc Mode**: User provides a sentence directly
-- Example: "Analyze: The quik brown fox jumps ovr the lazy dog"
-- Example: "Translate this sentence through the chain: Hello world"
-- Action: Run single sentence through translation chain + distance calculation
+### Ad-hoc Mode (Single Sentence) - MOST COMMON
+**Triggers:**
+- User says: "analyze", "test", "check", "please analyze"
+- User provides a sentence in quotes: 'text here'
+- User provides a sentence with typos
 
-**Batch Mode**: User asks for experiment/batch processing
-- Keywords: "run experiment", "batch", "automated", "multiple typo rates"
-- Action: Run full experiment with 21 sentences
+**Action:**
+Launch translation-experiment-orchestrator agent immediately
 
-## Your Responsibilities
+**How:**
+Use the Task tool to invoke the agent named "translation-experiment-orchestrator" and pass it the sentence.
 
-1. **Mode Detection**: Determine if user wants ad-hoc (single sentence) or batch mode
-2. **Agent Coordination**: Launch translator agents in sequence
-3. **Distance Calculation**: Launch embedding-analyzer agent (calls Python scripts)
-4. **Report Generation**: Show results clearly to user
+---
+
+### Batch Mode (Experiment)
+**Triggers:**
+- "run experiment"
+- "batch experiment"
+- "automated experiment"
+- "test multiple typo rates"
+
+**Action:**
+Launch batch-experiment-orchestrator agent
+
+---
 
 ## Supported Modes
 
 ### Ad-hoc Mode (Single Sentence Analysis)
-**Trigger**: User provides a specific sentence to analyze (can have typos or be clean)
 
-**Workflow**:
-1. Receive user sentence
-2. Save original to `tmp/original_sentence.txt`
-3. Launch translator_1 agent → saves to `tmp/first_hop_translation.md`
-4. Launch translator_2 agent → saves to `tmp/second_hop_translation.md`
-5. Launch translator_3 agent → saves to `tmp/third_hop_translation.md`
-6. Launch embedding-analyzer agent:
-   - Reads original and final translations
-   - Calls: `python scripts/calculate_distance.py "original" "final"`
-   - Returns semantic distance
-7. Generate simple report showing:
+**What YOU do:**
+1. Detect that user provided a sentence for analysis
+2. Launch the translation-experiment-orchestrator agent
+3. Wait for results and display them
+
+**What the translation-experiment-orchestrator agent does:**
+1. Save sentence to `tmp/original_sentence.txt` and `tmp/input_sentence.txt`
+2. Launch translator-1-en-fr (EN→FR) → writes `tmp/first_hop_translation.md`
+3. Launch translator-2-fr-it (FR→IT) → writes `tmp/second_hop_translation.md`
+4. Launch translator-3-it-en (IT→EN) → writes `tmp/third_hop_translation.md`
+5. Launch embedding-analyzer → calls Python to compute semantic distance
+6. Generate report with:
    - Original sentence
-   - Translation chain (EN→FR→IT→EN)
+   - Translation chain (all 3 hops)
    - Final English translation
    - Semantic distance value
-   - Interpretation (low/medium/high drift)
+   - Interpretation (minimal/low/moderate/high/severe drift)
 
-### Automated Mode
-**Trigger**: Keywords like "automated", "batch experiment", "multiple typo rates", "run experiment"
+---
 
-**IMPORTANT**: All sentence generation and typo injection is done by CLAUDE (you), NOT Python.
+### Automated Mode (Batch Experiment)
 
-**Workflow**:
-1. **Generate Sentences** (CLAUDE ONLY - NO PYTHON):
-   - Create 7 distinct English sentences (>15 words each)
-   - Topics: varied (daily life, science, technology, nature, etc.)
-   - For each typo rate (20%, 25%, 30%, 35%, 40%, 45%, 50%):
-     - Generate 3 DIFFERENT sentences
-     - Manually introduce typos at the specified rate
-     - Count words, count typos, calculate percentage
-     - Keep both original and corrupted versions
+**Triggers:** "run experiment", "batch", "automated"
 
-2. **Process Each Sentence**:
-   - Display: original, corrupted, word count, typo count, typo %
-   - Save corrupted to `tmp/input_sentence.txt`
-   - Save original to `tmp/original_sentence.txt`
-   - Launch translator_1 (EN→FR)
-   - Launch translator_2 (FR→IT)
-   - Launch translator_3 (IT→EN)
-   - Extract final English
-   - Document intermediate translations
-   - Note qualitative observations (semantic drift, meaning changes)
+**Process:**
+1. **Sentence Generation** (Claude only):
+   - Create 21 unique English sentences (>15 words each)
+   - 7 typo rates × 3 sentences = 21 total
+   - Typo rates: 20%, 25%, 30%, 35%, 40%, 45%, 50%
 
-3. **Distance Calculation**:
-   - Launch embedding_analyzer agent for each sentence
-   - Agent calls: `python scripts/calculate_distance.py "original" "final"`
-   - Collect distance values
+2. **Translation Processing** (Claude agents):
+   - Run each sentence through 3-hop chain
+   - Document all intermediate translations
 
-4. **Graph Generation**:
-   - Call: `python scripts/batch_calculate_distances.py`
-   - Generates: `results/semantic_drift_analysis.png` (matplotlib graph)
-   - Generates: `results/quantitative_analysis.md` (statistics table)
+3. **Distance Calculation** (Python):
+   - Compute embeddings for all 21 sentences
+   - Calculate semantic distances
 
-5. **Create Comprehensive Report** (ALL BY CLAUDE):
-   - Structured table: all sentences with stats
-   - For each typo level: average stability/consistency
-   - Include generated graph: `![Semantic Drift Analysis](./semantic_drift_analysis.png)`
-   - Link to quantitative data: `quantitative_analysis.md`
-   - Qualitative analysis and insights
-   - Save to: `results/FINAL_EXPERIMENT_REPORT.md`
+4. **Visualization** (Python):
+   - Generate graphs: `results/semantic_drift_analysis.png`
+   - Generate statistics: `results/quantitative_analysis.md`
+
+5. **Report** (Claude):
+   - Comprehensive markdown report
+   - All deliverables in `results/FINAL_EXPERIMENT_REPORT.md`
+
+---
 
 ## Agent Details
 
-### Translator 1: English → French
-- **Skill**: translate (Claude native multilingual capabilities)
-- **Input**: English sentence (from user or typo-injected)
-- **Output**: `tmp/first_hop_translation.md`
+### Available Agents
 
-### Translator 2: French → Italian
-- **Skill**: translate (Claude native multilingual capabilities)
-- **Input**: `tmp/first_hop_translation.md`
-- **Output**: `tmp/second_hop_translation.md`
+**Translation Chain:**
+- `translator-1-en-fr` (in .claude/agents/translators/) - English → French
+- `translator-2-fr-it` (in .claude/agents/translators/) - French → Italian
+- `translator-3-it-en` (in .claude/agents/translators/) - Italian → English
 
-### Translator 3: Italian → English
-- **Skill**: translate (Claude native multilingual capabilities)
-- **Input**: `tmp/second_hop_translation.md`
-- **Output**: `tmp/third_hop_translation.md`
+**Orchestrators:**
+- `translation-experiment-orchestrator` (in .claude/agents/orchestrators/) - Main workflow
+- `embedding-analyzer` (in .claude/agents/orchestrators/) - Semantic distance calculation
+- `batch-experiment-orchestrator` (in .claude/agents/orchestrators/) - Batch processing
 
-## Python Script Usage
+---
 
-All Python scripts are in `/scripts/` folder (NOT in `.claude/`).
+## Python Scripts
 
-### Single Sentence Distance
-**Script**: `scripts/calculate_distance.py`
+All Python scripts in `/scripts/` folder:
+
+**Single Sentence:**
 ```bash
 python scripts/calculate_distance.py "sentence1" "sentence2"
-# Returns: 0.234567 (floating point distance to stdout)
+# Returns: 0.234567
 ```
-**Called by**: embedding-analyzer agent
 
-### Batch Distance Calculation & Visualization
-**Script**: `scripts/batch_calculate_distances.py`
+**Batch Processing:**
 ```bash
 python scripts/batch_calculate_distances.py
-# Generates: results/semantic_drift_analysis.png (graph)
-# Generates: results/quantitative_analysis.md (statistics)
-```
-**Called by**: batch-experiment-orchestrator or directly
-
-## Tools You Use
-
-- **Task**: Launch translator agents
-- **Skill**: typo-injector (for automated mode)
-- **Write**: Save sentences to tmp files
-- **Read**: Extract translations from agent output files
-- **Bash**: Call Python distance script, create directories
-- **Matplotlib/Python**: Generate graphs (via Python snippets)
-
-## Graph Generation
-
-For automated mode, graphs are automatically generated by Python scripts:
-
-**Output**: `results/semantic_drift_analysis.png`
-- Scatter plot with error bars
-- X-axis: Spelling error percentage (20-50%)
-- Y-axis: Semantic distance (cosine)
-- Shows mean trend line with individual points
-- 4 subplots with different visualizations:
-  1. Mean distance with min/max range
-  2. All individual data points
-  3. Distribution histogram
-  4. Box plot by typo rate
-
-**Generated by**: `python scripts/batch_calculate_distances.py`
-
-**Embedded in Report**:
-```markdown
-![Semantic Drift Analysis](./semantic_drift_analysis.png)
+# Generates: results/semantic_drift_analysis.png
+# Generates: results/quantitative_analysis.md
 ```
 
-## Deliverables Checklist
-
-Both modes must output:
-- ✅ Original and typo-injected English sentences
-- ✅ Sentence lengths (word count)
-- ✅ Description of each agent's skills
-- ✅ Graph showing spelling errors vs vector distance
-- ✅ (Optional) Python code used for embeddings/distance
-
-## Example Interactions
-
-**Manual Mode**:
-```
-User: "Analyze these sentences: 'The quik brown fox jumps ovr the lazi dog'"
-
-You:
-1. Save sentence to tmp/original_sentence.txt
-2. Launch translator_1 with sentence
-3. Launch translator_2 (reads from tmp/first_hop_translation.md)
-4. Launch translator_3 (reads from tmp/second_hop_translation.md)
-5. Extract final English from tmp/third_hop_translation.md
-6. Call: python calculate_distance.py "original" "final"
-7. Generate report with all deliverables
-```
-
-**Automated Mode**:
-```
-User: "Run automated experiment with 0-50% typo rates"
-
-You:
-1. Generate base sentence: "The quick brown fox jumps over the lazy dog"
-2. For typo_rate in [0%, 10%, 20%, 25%, 30%, 35%, 40%, 45%, 50%]:
-   - For iteration in 1..3:
-     - Use typo-injector skill to create corrupted sentence
-     - Run translation chain (3 agents)
-     - Calculate distance
-     - Store result
-3. Calculate statistics per typo rate
-4. Generate graph
-5. Generate comprehensive report
-```
-
-## Important Rules
-
-### Separation of Responsibilities
-
-**CLAUDE (YOU) handles:**
-- Sentence generation (create original English sentences >15 words)
-- Typo injection (manually introduce spelling errors at specified rates)
-- Translation (via agents: translator_1, translator_2, translator_3)
-- Qualitative analysis (semantic drift observations, meaning changes)
-- Report generation (comprehensive markdown reports with tables)
-- Conceptual graph descriptions (describe expected patterns)
-
-**PYTHON handles (ONLY AT THE END):**
-- Embedding computation (convert text to 384-dim vectors)
-- Distance calculation (cosine distance between vectors)
-- Quantitative graph generation (matplotlib visualizations)
-
-### Critical Rules
-
-- ❌ DO NOT use Python for sentence generation
-- ❌ DO NOT use Python for typo injection
-- ❌ DO NOT use typo-injector skill - manually create typos
-- ✅ YOU (Claude) create all sentences and introduce typos
-- ✅ Translation via Claude agents (NOT Python)
-- ✅ Python ONLY for final distance calculations and graphs
-- ✅ All qualitative analysis by YOU (Claude)
-- ✅ Save all outputs to `results/` directory
+---
 
 ## File Structure
 
 ```
 tmp/
-  ├── original_sentence.txt          (saved by you)
-  ├── input_sentence.txt              (typo-injected, saved by you)
-  ├── first_hop_translation.md        (created by translator_1)
-  ├── second_hop_translation.md       (created by translator_2)
-  └── third_hop_translation.md        (created by translator_3)
+  ├── original_sentence.txt          # Original sentence (saved by orchestrator)
+  ├── input_sentence.txt              # Same as original (or typo-injected)
+  ├── first_hop_translation.md        # EN→FR (by translator-1-en-fr)
+  ├── second_hop_translation.md       # FR→IT (by translator-2-fr-it)
+  └── third_hop_translation.md        # IT→EN (by translator-3-it-en)
 
 results/
-  ├── semantic_drift_analysis.png     (batch mode visualization)
-  └── quantitative_analysis.md        (batch mode statistics)
+  ├── semantic_drift_analysis.png     # Graph (batch mode)
+  └── quantitative_analysis.md        # Statistics (batch mode)
 ```
 
-Be autonomous and proactive. Detect user intent, execute the full workflow, and generate all deliverables automatically.
+---
+
+## Important Rules
+
+**Claude Responsibilities:**
+- Sentence generation
+- Typo injection
+- Translation coordination
+- Qualitative analysis
+- Report generation
+
+**Python Responsibilities:**
+- Embedding computation (384-dim vectors)
+- Distance calculation (cosine distance)
+- Graph generation (matplotlib)
+
+**Separation:** Claude does language work, Python does math.
+
+---
+
+## Critical Reminders
+
+1. **For sentences with typos** → EXECUTE the pipeline (don't just identify errors)
+2. **For "analyze" requests** → EXECUTE the pipeline (don't explain what you'll do)
+3. **For batch requests** → Launch batch-experiment-orchestrator
+4. **For questions about the project** → Answer normally
+
+**This is a SEMANTIC DRIFT ANALYSIS TOOL, not a spell checker.**
+
+When in doubt: RUN THE PIPELINE.

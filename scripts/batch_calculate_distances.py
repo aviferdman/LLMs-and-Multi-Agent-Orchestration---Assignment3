@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Add embeddings skill to path
-base_dir = Path(__file__).parent
+base_dir = Path(__file__).parent.parent  # Go up to project root
 sys.path.append(str(base_dir / '.claude' / 'skills' / 'embeddings'))
 
 from embedding_utils import compute_embedding, cosine_distance

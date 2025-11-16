@@ -27,27 +27,31 @@ This system analyzes semantic drift through multi-hop translation with spelling 
 
 ## Modes of Operation
 
-### Manual Mode
-**When to use**: You have specific sentences with typos to analyze
+### Ad-hoc Mode (Single Sentence)
+**When to use**: You want to analyze a single sentence
 
-**How to trigger**: Provide your sentences directly
+**How to trigger**: Provide a sentence directly
 
 **Example**:
 ```
-"Analyze this sentence: 'The quik brown fox jumps ovr the lazi dog in the beatiful park'"
+"Analyze: The quik brown fox jumps ovr the lazi dog"
+"Translate this sentence: Hello world, how are you today?"
 ```
 
 **What happens**:
-1. Orchestrator saves your sentence
-2. Runs it through 3 translator agents
-3. Calls Python to calculate distance
-4. Generates report with results
+1. Orchestrator saves your sentence to `tmp/original_sentence.txt`
+2. Launches translator_1 → saves to `tmp/first_hop_translation.md`
+3. Launches translator_2 → saves to `tmp/second_hop_translation.md`
+4. Launches translator_3 → saves to `tmp/third_hop_translation.md`
+5. Launches embedding-analyzer → calculates semantic distance
+6. Shows you the results immediately
 
 **Output**:
-- Individual sentence analysis
-- Vector distance for each
-- Agent skill descriptions
-- Summary statistics
+- Original sentence
+- Translation chain (EN→FR→IT→EN)
+- Final English translation
+- Semantic distance value
+- Interpretation (low/medium/high drift)
 
 ---
 

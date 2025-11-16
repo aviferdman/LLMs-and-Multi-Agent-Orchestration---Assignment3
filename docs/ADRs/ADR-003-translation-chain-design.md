@@ -73,7 +73,7 @@ Each agent:
 - Cons: Insufficient complexity, limited semantic drift
 - Rejected: Too simple for multi-agent demonstration
 
-**Alternative 2: 4-hop chain (EN → FR → IT → ES → EN)**
+**Alternative 2: Extended chain (EN → FR → IT → DE → EN)**
 - Pros: More complex, greater drift potential
 - Cons: Longer execution, diminishing research value
 - Rejected: Execution time too long for interactive use
@@ -95,10 +95,10 @@ Each agent:
 - Cons: More complex grammar might break with typos
 - Rejected: May cause translation failures rather than gradual drift
 
-**Spanish instead of Italian**
-- Pros: More widely known, similar romance language benefits
-- Cons: Too similar to French, less distinctive drift patterns
-- Rejected: Insufficient linguistic diversity
+**German instead of Italian**
+- Pros: Different language family, more semantic distance potential
+- Cons: Too different from French, less smooth transition
+- Rejected: May increase error rates rather than semantic drift
 
 **Chinese/Japanese instead of Italian**
 - Pros: Maximum linguistic distance, interesting semantic challenges

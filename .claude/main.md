@@ -5,33 +5,45 @@ You are the main orchestrator for analyzing semantic drift through multi-hop tra
 ## Translation Chain
 English → French → Italian → English (3 hops, ends back in English)
 
+## Mode Detection Logic
+
+**Ad-hoc Mode**: User provides a sentence directly
+- Example: "Analyze: The quik brown fox jumps ovr the lazy dog"
+- Example: "Translate this sentence through the chain: Hello world"
+- Action: Run single sentence through translation chain + distance calculation
+
+**Batch Mode**: User asks for experiment/batch processing
+- Keywords: "run experiment", "batch", "automated", "multiple typo rates"
+- Action: Run full experiment with 21 sentences
+
 ## Your Responsibilities
 
-1. **Mode Detection**: Determine if user wants manual or automated mode
+1. **Mode Detection**: Determine if user wants ad-hoc (single sentence) or batch mode
 2. **Agent Coordination**: Launch translator agents in sequence
-3. **Distance Calculation**: Call Python script ONLY for embeddings/distance
-4. **Report Generation**: Create comprehensive deliverables
+3. **Distance Calculation**: Launch embedding-analyzer agent (calls Python scripts)
+4. **Report Generation**: Show results clearly to user
 
 ## Supported Modes
 
-### Manual Mode
-**Trigger**: User provides specific sentences (15+ words, 25%+ spelling errors)
+### Ad-hoc Mode (Single Sentence Analysis)
+**Trigger**: User provides a specific sentence to analyze (can have typos or be clean)
 
 **Workflow**:
-1. Receive user sentences
-2. For each sentence:
-   - Save to `tmp/original_sentence.txt`
-   - Launch translator_1 agent (English → French)
-   - Launch translator_2 agent (French → Italian)
-   - Launch translator_3 agent (Italian → English)
-   - Call `python calculate_distance.py "original" "final"`
-   - Record results
-3. Generate consolidated report with:
-   - Original and typo-injected sentences
-   - Sentence lengths
-   - Agent skill descriptions
-   - Vector distances for each sentence
-   - Summary statistics
+1. Receive user sentence
+2. Save original to `tmp/original_sentence.txt`
+3. Launch translator_1 agent → saves to `tmp/first_hop_translation.md`
+4. Launch translator_2 agent → saves to `tmp/second_hop_translation.md`
+5. Launch translator_3 agent → saves to `tmp/third_hop_translation.md`
+6. Launch embedding-analyzer agent:
+   - Reads original and final translations
+   - Calls: `python scripts/calculate_distance.py "original" "final"`
+   - Returns semantic distance
+7. Generate simple report showing:
+   - Original sentence
+   - Translation chain (EN→FR→IT→EN)
+   - Final English translation
+   - Semantic distance value
+   - Interpretation (low/medium/high drift)
 
 ### Automated Mode
 **Trigger**: Keywords like "automated", "batch experiment", "multiple typo rates", "run experiment"
@@ -59,45 +71,61 @@ English → French → Italian → English (3 hops, ends back in English)
    - Document intermediate translations
    - Note qualitative observations (semantic drift, meaning changes)
 
-3. **Create Comprehensive Report** (ALL BY CLAUDE):
+3. **Distance Calculation**:
+   - Launch embedding_analyzer agent for each sentence
+   - Agent calls: `python scripts/calculate_distance.py "original" "final"`
+   - Collect distance values
+
+4. **Graph Generation**:
+   - Call: `python scripts/batch_calculate_distances.py`
+   - Generates: `results/semantic_drift_analysis.png` (matplotlib graph)
+   - Generates: `results/quantitative_analysis.md` (statistics table)
+
+5. **Create Comprehensive Report** (ALL BY CLAUDE):
    - Structured table: all sentences with stats
    - For each typo level: average stability/consistency
-   - Conceptual graph description (how typo % affects quality)
+   - Include generated graph: `![Semantic Drift Analysis](./semantic_drift_analysis.png)`
+   - Link to quantitative data: `quantitative_analysis.md`
    - Qualitative analysis and insights
-   - ALL in ONE consolidated output file
-
-4. **Python Step (FINAL ONLY)**:
-   - AFTER report is complete
-   - For each sentence pair, call: `python calculate_distance.py "original" "final"`
-   - Collect all distances
-   - Generate quantitative graph using matplotlib
-   - Append to existing report
+   - Save to: `results/FINAL_EXPERIMENT_REPORT.md`
 
 ## Agent Details
 
 ### Translator 1: English → French
-- **Skill**: translate (Google Translate API)
+- **Skill**: translate (Claude native multilingual capabilities)
 - **Input**: English sentence (from user or typo-injected)
 - **Output**: `tmp/first_hop_translation.md`
 
 ### Translator 2: French → Italian
-- **Skill**: translate (Google Translate API)
+- **Skill**: translate (Claude native multilingual capabilities)
 - **Input**: `tmp/first_hop_translation.md`
 - **Output**: `tmp/second_hop_translation.md`
 
 ### Translator 3: Italian → English
-- **Skill**: translate (Google Translate API)
+- **Skill**: translate (Claude native multilingual capabilities)
 - **Input**: `tmp/second_hop_translation.md`
 - **Output**: `tmp/third_hop_translation.md`
 
 ## Python Script Usage
 
-**ONLY for distance calculation** - NOT for translation!
+All Python scripts are in `/scripts/` folder (NOT in `.claude/`).
 
+### Single Sentence Distance
+**Script**: `scripts/calculate_distance.py`
 ```bash
-python calculate_distance.py "sentence1" "sentence2"
-# Returns: 0.234567 (floating point distance)
+python scripts/calculate_distance.py "sentence1" "sentence2"
+# Returns: 0.234567 (floating point distance to stdout)
 ```
+**Called by**: embedding-analyzer agent
+
+### Batch Distance Calculation & Visualization
+**Script**: `scripts/batch_calculate_distances.py`
+```bash
+python scripts/batch_calculate_distances.py
+# Generates: results/semantic_drift_analysis.png (graph)
+# Generates: results/quantitative_analysis.md (statistics)
+```
+**Called by**: batch-experiment-orchestrator or directly
 
 ## Tools You Use
 
@@ -110,26 +138,24 @@ python calculate_distance.py "sentence1" "sentence2"
 
 ## Graph Generation
 
-For automated mode, create a scatter plot:
-- X-axis: Spelling error percentage (0-50%)
-- Y-axis: Semantic distance (0-2)
-- Show trend line
-- Save to `results/semantic_drift_graph.png`
+For automated mode, graphs are automatically generated by Python scripts:
 
-You can use Python directly for this:
-```python
-import matplotlib.pyplot as plt
+**Output**: `results/semantic_drift_analysis.png`
+- Scatter plot with error bars
+- X-axis: Spelling error percentage (20-50%)
+- Y-axis: Semantic distance (cosine)
+- Shows mean trend line with individual points
+- 4 subplots with different visualizations:
+  1. Mean distance with min/max range
+  2. All individual data points
+  3. Distribution histogram
+  4. Box plot by typo rate
 
-typo_rates = [0, 10, 20, 25, 30, 35, 40, 45, 50]
-distances = [0.12, 0.15, 0.19, 0.23, 0.28, 0.31, 0.36, 0.42, 0.48]
+**Generated by**: `python scripts/batch_calculate_distances.py`
 
-plt.figure(figsize=(10, 6))
-plt.plot(typo_rates, distances, 'o-', linewidth=2)
-plt.xlabel('Spelling Error %')
-plt.ylabel('Embedding Distance')
-plt.title('Semantic Drift vs Spelling Errors\n(English→French→Italian→English)')
-plt.grid(True, alpha=0.3)
-plt.savefig('results/semantic_drift_graph.png', dpi=300)
+**Embedded in Report**:
+```markdown
+![Semantic Drift Analysis](./semantic_drift_analysis.png)
 ```
 
 ## Deliverables Checklist
@@ -213,9 +239,8 @@ tmp/
   └── third_hop_translation.md        (created by translator_3)
 
 results/
-  ├── manual_report.md                (manual mode output)
-  ├── automated_report.md             (automated mode output)
-  └── semantic_drift_graph.png        (automated mode graph)
+  ├── semantic_drift_analysis.png     (batch mode visualization)
+  └── quantitative_analysis.md        (batch mode statistics)
 ```
 
 Be autonomous and proactive. Detect user intent, execute the full workflow, and generate all deliverables automatically.

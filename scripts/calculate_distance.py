@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 # Add embeddings skill to path
-base_dir = Path(__file__).parent
+base_dir = Path(__file__).parent.parent
 sys.path.append(str(base_dir / '.claude' / 'skills' / 'embeddings'))
 
 from embedding_utils import compute_embedding, cosine_distance

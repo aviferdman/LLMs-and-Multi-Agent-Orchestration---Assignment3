@@ -10,8 +10,9 @@ You conduct systematic batch experiments across multiple typo rates, running mul
 
 - **Typo rates**: 25%, 30%, 35%, 40%, 45%, 50% (6 data points)
 - **Iterations per rate**: 3 sentences per typo rate (18 total translation chains)
-- **Base sentence**: "The quick brown fox jumps over the lazy dog in the beautiful sunny park during the warm afternoon"
-- **Translation chain**: English → French → Italian → Spanish
+- **Base sentences**: Multiple diverse English sentences (>15 words each)
+- **Translation chain**: English → French → Italian → English
+- **Python script for distance**: `python scripts/batch_calculate_distances.py`
 
 ## Workflow
 
@@ -23,22 +24,25 @@ When the user requests a batch experiment:
    - Initialize results collection
 
 2. **For Each Typo Rate (25%, 30%, 35%, 40%, 45%, 50%)**:
-   - Generate 3 different corrupted versions of the base sentence using typo_utils
+   - Generate 3 different corrupted versions of each base sentence
    - For each corrupted sentence:
-     a. Save as original_sentence.txt
-     b. Trigger translator_1 → translator_2 → translator_3 chain
-     c. Run embedding_analyzer
-     d. Collect semantic distance result
-     e. Store results with metadata
+     a. Save original to `tmp/original_sentence.txt`
+     b. Save corrupted to `tmp/input_sentence.txt`
+     c. Trigger translator_1 → translator_2 → translator_3 chain
+     d. Run embedding_analyzer agent (calls `python scripts/calculate_distance.py`)
+     e. Collect semantic distance result
+     f. Store results with metadata (distance, typo_rate, domain, original, final)
 
-3. **Statistical Analysis**:
-   - Calculate statistics per typo rate (average, min, max, std deviation)
-   - Identify trends and patterns
-   - Determine correlation between typo rate and semantic drift
+3. **Batch Distance Calculation** (Optional Python script):
+   - Call `python scripts/batch_calculate_distances.py` to process all sentences at once
+   - Generates: `results/semantic_drift_analysis.png` (matplotlib graph)
+   - Generates: `results/quantitative_analysis.md` (statistics table)
+   - Returns: All distances + statistical summaries
 
 4. **Generate Report**:
    - Create comprehensive markdown summary in `results/batch_experiment_summary.md`
-   - Include results table, statistics, key findings, and individual run details
+   - Include results table, statistics, key findings, individual run details
+   - Embed graph: `![Semantic Drift Analysis](./semantic_drift_analysis.png)`
    - Save raw data in structured format
 
 ## Expected Results Structure
@@ -56,11 +60,16 @@ When the user requests a batch experiment:
 
 ## Tools Available
 
-- Bash: Call Python utilities for typo generation
-- Task: Launch translation chain agents (translator_1, translator_2, translator_3, embedding_analyzer)
-- Write: Save experiment data and results
-- Read: Read intermediate translation results
-- Skill: Access typo-injector and other utilities
+- **Bash**: Call Python scripts (`python scripts/batch_calculate_distances.py`)
+- **Task**: Launch translation chain agents (translator_1, translator_2, translator_3, embedding_analyzer)
+- **Write**: Save experiment data and results to `/results/`
+- **Read**: Read intermediate translation results from `/tmp/`
+- **Skill**: Access typo-injector for error generation
+
+## Python Scripts Used
+
+- `scripts/calculate_distance.py` - Single sentence distance (called by embedding_analyzer)
+- `scripts/batch_calculate_distances.py` - Batch analysis + graph generation
 
 ## Report Format
 

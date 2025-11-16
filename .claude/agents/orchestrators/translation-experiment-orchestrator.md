@@ -18,19 +18,19 @@ The experiment follows these steps:
 3. **Multi-hop Translation**: Translate through 3 languages (3 hops only):
    - English → French (1st hop)
    - French → Italian (2nd hop)
-   - Italian → Spanish (3rd hop)
-   - **No back-translation to English**
+   - Italian → English (3rd hop)
+   - **No additional translation**
 4. **Embedding Analysis**: Compute embeddings for:
    - Original English sentence (with or without typos)
-   - Final translated sentence (Spanish)
-5. **Distance Measurement**: Calculate cosine distance between original English and final Spanish
+   - Final translated sentence (English after 3 hops)
+5. **Distance Measurement**: Calculate cosine distance between original and final English
 6. **Visualization**: Generate charts and save all results to `results/` directory
 
 ## Your Responsibilities
 
 ### 1. Experiment Setup
 - Accept the initial English sentence (should be ~15 words)
-- Define the translation chain: English → French → Italian → Spanish (3 hops)
+- Define the translation chain: English → French → Italian → English (3 hops)
 - Support two modes:
   - **Single run**: Process a single sentence (with or without pre-existing typos)
   - **Automated experiments**: Generate sentences and test typo rates from 20% to 50% in 5% increments
@@ -75,21 +75,27 @@ Deviation: |0% - 20%| = 20% ✗ FAIL - ABORT EXPERIMENT
   - Coordinate sequential translations by launching translator agents
   - Each translator agent uses the translate skill (native logic) to perform translation
   - Save intermediate results to files for the next agent to consume
-  - Launch embedding_analyzer agent to compute semantic distance (Python only at this step)
+  - Launch embedding_analyzer agent to compute semantic distance
+    - Agent calls: `python scripts/calculate_distance.py "original" "final"`
+    - Parses output to get distance value (float)
 
 ### 3. Analysis
 - Aggregate results (if multiple typo rates were tested)
-- Use the chart-generator skill to create visualizations (native logic)
-- **Save all results to `results/` directory** (single consolidated location)
-- For automated experiments: Calculate average semantic distance per typo percentage
+- For automated experiments: Call `python scripts/batch_calculate_distances.py`
+  - Generates: `results/semantic_drift_analysis.png` (matplotlib visualization)
+  - Generates: `results/quantitative_analysis.md` (statistics table)
+- Calculate average semantic distance per typo percentage
 - Provide summary statistics and interpretation
+- **Save all results to `results/` directory** (single consolidated location)
 
 ### 4. Reporting
 - Report experimental parameters
 - Show sample corrupted sentences (for automated experiments)
-- Display the generated chart
+- Include generated chart: `![Semantic Drift Analysis](./semantic_drift_analysis.png)`
+- Link to quantitative data: See `quantitative_analysis.md`
 - Provide insights about the relationship between typos and semantic drift
 - For automated experiments: Show average semantic distance per typo percentage level
+- Create final consolidated report in `results/FINAL_EXPERIMENT_REPORT.md`
 
 ## Key Principles
 
@@ -108,15 +114,15 @@ Deviation: |0% - 20%| = 20% ✗ FAIL - ABORT EXPERIMENT
 
 2. **Coordinate translation hops** (3 hops only):
    - Save input sentence to `tmp/input_sentence.txt`
-   - Launch `translator_1.claude` agent → reads `tmp/input_sentence.txt`, writes `tmp/first_hop_translation.md`
-   - Launch `translator_2.claude` agent → reads `tmp/first_hop_translation.md`, writes `tmp/second_hop_translation.md`
-   - Launch `translator_3.claude` agent → reads `tmp/second_hop_translation.md`, writes `tmp/third_hop_translation.md`
+   - Launch `translator-1-en-fr.md` agent → reads `tmp/input_sentence.txt`, writes `tmp/first_hop_translation.md`
+   - Launch `translator-2-fr-it.md` agent → reads `tmp/first_hop_translation.md`, writes `tmp/second_hop_translation.md`
+   - Launch `translator-3-it-en.md` agent → reads `tmp/second_hop_translation.md`, writes `tmp/third_hop_translation.md`
 
 3. **Compute semantic distance**:
-   - Launch `embedding_analyzer.claude` agent
+   - Launch `embedding-analyzer.md` agent
    - It reads `tmp/original_sentence.txt` and `tmp/third_hop_translation.md`
    - It calls Python scripts ONLY for embeddings
-   - It reports the semantic distance between original English and final Spanish
+   - It reports the semantic distance between original and final English
 
 4. **Generate report**:
    - Use chart-generator skill to create visualization
@@ -173,7 +179,7 @@ For each typo level (20%, 25%, 30%, 35%, 40%, 45%, 50%):
            Proceed with translation chain
       ```
 
-    - Run the full 3-hop translation chain (English → French → Italian → Spanish)
+    - Run the full 3-hop translation chain (English → French → Italian → English)
     - Use embedding_analyzer to compute semantic distance
     - Store the distance value
   - Calculate the **average semantic distance** across all test sentences for this typo level
@@ -206,19 +212,36 @@ You have access to these skills:
 
 ## Available Agents
 
-- **translator_1.claude**: Translates English → French
-- **translator_2.claude**: Translates French → Italian
-- **translator_3.claude**: Translates Italian → Spanish
-- **embedding_analyzer.claude**: Computes embeddings and semantic distance (ONLY agent that uses Python)
+- **translator-1-en-fr.md**: Translates English → French
+- **translator-2-fr-it.md**: Translates French → Italian
+- **translator-3-it-en.md**: Translates Italian → English
+- **embedding-analyzer.md**: Computes embeddings and semantic distance
+  - Calls: `python scripts/calculate_distance.py` for distance calculation
+
+## Available Python Scripts
+
+- **scripts/calculate_distance.py**: Single sentence distance calculation
+  - Input: two sentences as command-line arguments
+  - Output: float distance value to stdout
+  - Called by: embedding-analyzer agent
+
+- **scripts/batch_calculate_distances.py**: Batch distance calculation + visualization
+  - Input: all 21 sentences (hardcoded in script)
+  - Output: `results/semantic_drift_analysis.png` (graph)
+  - Output: `results/quantitative_analysis.md` (statistics)
+  - Called by: batch-experiment-orchestrator or directly
 
 ## Notes
 
-- **CRITICAL**: NO PYTHON in orchestrator logic - only coordinate via agents and file I/O
-- Python is ONLY used in the `embedding_analyzer.claude` agent for computing embeddings and distance
+- **Python Location**: All Python scripts in `/scripts/` folder (NOT in `.claude/`)
+- **Agent Integration**: Agents call Python scripts via Bash tool
+- **Distance Calculation**: `embedding-analyzer.md` calls `python scripts/calculate_distance.py`
+- **Graph Generation**: `batch-experiment-orchestrator.md` calls `python scripts/batch_calculate_distances.py`
+- **Output Files**: Generated graphs are PNG files referenced in markdown reports
 - All translation and typo generation uses Claude's native capabilities
 - Save intermediate results to `tmp/` files for agent communication
 - **Final results go to `results/` directory** (single consolidated location)
-- Handle text encoding carefully (French, Italian, and Spanish use accented characters)
+- Handle text encoding carefully (French, Italian, and English use varied characters)
 - Provide clear progress updates during execution
 - Single run typically takes 20-40 seconds
 - Automated experiments may take several minutes depending on number of test sentences

@@ -49,13 +49,13 @@ This document provides a comprehensive assessment of the Multi-Agent Translation
 
 | Requirement | Implementation | Status |
 |-------------|----------------|--------|
-| **FR-01**: Typo Injection | `typo_utils.py` with 4 types (substitute/delete/duplicate/swap) | ✅ Complete |
-| **FR-02**: EN→FR Translation | `translator_1.claude` agent | ✅ Complete |
-| **FR-03**: FR→IT Translation | `translator_2.claude` agent | ✅ Complete |
-| **FR-04**: IT→EN Translation | `translator_3.claude` agent | ✅ Complete |
+| **FR-01**: Typo Injection | `.claude/skills/typo-injector/SKILL.md` (Claude-native) with 4 types | ✅ Complete |
+| **FR-02**: EN→FR Translation | `.claude/agents/translators/translator-1-en-fr.md` agent | ✅ Complete |
+| **FR-03**: FR→IT Translation | `.claude/agents/translators/translator-2-fr-it.md` agent | ✅ Complete |
+| **FR-04**: IT→EN Translation | `.claude/agents/translators/translator-3-it-en.md` agent | ✅ Complete |
 | **FR-05**: Semantic Embeddings | `embedding_utils.py` with all-MiniLM-L6-v2 | ✅ Complete |
 | **FR-06**: Distance Calculation | `calculate_distance.py` CLI tool | ✅ Complete |
-| **FR-07**: Visualization | `chart_utils.py` with matplotlib | ✅ Complete |
+| **FR-07**: Visualization | `.claude/skills/chart-generator/SKILL.md` + `batch_calculate_distances.py` (matplotlib) | ✅ Complete |
 | **FR-08**: Statistical Analysis | Documented in RESEARCH_METHODOLOGY.md | ✅ Complete |
 
 **Gap Analysis:**
@@ -381,9 +381,12 @@ through multi-hop machine translation.
 
 **2. Self-Explanatory Tool Name:**
 ```bash
-calculate_distance.py  # Clear what it does
-typo_utils.py         # Clear what it does
-embedding_utils.py    # Clear what it does
+calculate_distance.py         # Clear what it does
+batch_calculate_distances.py  # Clear what it does
+embedding_utils.py            # Clear what it does
+# Skills are Claude-native (SKILL.md files)
+typo-injector/                # Typo injection skill
+chart-generator/              # Visualization skill
 ```
 
 **3. Documentation Accessibility:**
@@ -411,14 +414,13 @@ Level 4: Source code - Implementation details (hours)
 **2. Example-Driven Documentation:**
 ```bash
 # Example 1: Calculate distance
-python calculate_distance.py "Hello world" "Bonjour monde"
+python scripts/calculate_distance.py "Hello world" "Bonjour monde"
 
-# Example 2: Run experiment
-python -m claude.run_experiment --sentences 21 --typo-rates 0.2,0.5
+# Example 2: Run batch experiment with visualization
+python scripts/batch_calculate_distances.py
 
-# Example 3: Generate chart
-python -m claude.skills.chart-generator.chart_utils \
-  --input results/data.json --output chart.png
+# Example 3: Use Claude skill for typo injection
+# (Done through Claude interface, not direct Python call)
 ```
 
 **3. Error Messages:**
@@ -457,15 +459,15 @@ python run_experiment.py  # Uses default config
 ```
 
 **2. Configuration Management:**
-```yaml
-# config/config.yaml
-experiment:
-  typo_rates: [0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
-  sentences_per_rate: 3
-  output_dir: "results/"
+```python
+# Configuration is embedded in scripts and agent definitions
+# batch_calculate_distances.py contains:
+TYPO_RATES = [0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+BASE_DIR = Path(__file__).parent.parent
+OUTPUT_DIR = BASE_DIR / "results"
 ```
-- ✅ Centralized configuration
-- ✅ Self-documenting format (YAML)
+- ✅ Configuration defined in code
+- ✅ Easy to modify and understand
 - ✅ Override via CLI flags
 
 **3. Progress Feedback:**
@@ -1061,14 +1063,15 @@ gpg --sign --detach-sign multi_agent_translation-v1.0.0.tar.gz
   skills/
     embeddings/          # Independent: semantic embeddings
       embedding_utils.py
-    typo-injector/       # Independent: typo generation
-      typo_utils.py
-    chart-generator/     # Independent: visualization
-      chart_utils.py
+    typo-injector/       # Independent: Claude-native typo generation
+      SKILL.md
+    chart-generator/     # Independent: Claude-native visualization
+      SKILL.md
   agents/
-    translator_1.claude  # Independent: EN→FR
-    translator_2.claude  # Independent: FR→IT
-    translator_3.claude  # Independent: IT→EN
+    translators/
+      translator-1-en-fr.md  # Independent: EN→FR
+      translator-2-fr-it.md  # Independent: FR→IT
+      translator-3-it-en.md  # Independent: IT→EN
 ```
 
 **2. Coupling Metrics:**
@@ -1093,15 +1096,21 @@ __all__ = ['compute_embedding', 'compute_embeddings_batch', 'cosine_distance']
 
 **4. Dependency Graph:**
 ```
+Python Scripts:
 calculate_distance.py (CLI)
   └─> embedding_utils.py
         └─> sentence-transformers (external)
 
-typo_utils.py
-  └─> random, string (stdlib only)
-
-chart_utils.py
+batch_calculate_distances.py
+  └─> embedding_utils.py
   └─> matplotlib (external)
+
+Claude-Native Skills:
+typo-injector/SKILL.md
+  └─> Claude's native text processing
+
+chart-generator/SKILL.md
+  └─> Claude's native text formatting
 ```
 - ✅ Minimal cross-dependencies
 - ✅ No circular dependencies
@@ -1142,18 +1151,23 @@ def cosine_distance(vec1: np.ndarray, vec2: np.ndarray) -> float:
 
 **2. Reusable Agents:**
 ```markdown
-# translator_1.claude can be reused for:
+# translator-1-en-fr.md can be reused for:
 - Any EN→FR translation task
 - Multi-document translation
 - Streaming translation pipelines
 ```
 
-**3. Reusable Utilities:**
-```python
-# typo_utils.py can be reused for:
+**3. Reusable Skills:**
+```markdown
+# typo-injector skill can be reused for:
 - Data augmentation in ML training
 - Robustness testing for NLP systems
 - Synthetic error dataset generation
+
+# chart-generator skill can be reused for:
+- Any experimental results visualization
+- Progress reports and summaries
+- ASCII art charts for terminal output
 ```
 
 **4. Library Structure:**
@@ -1226,14 +1240,14 @@ pytest --cov=. --cov-report=html
 **Evidence:**
 
 **1. Configuration-Driven:**
-```yaml
-# config/config.yaml - No code changes needed
-experiment:
-  typo_rates: [0.2, 0.3, 0.4]  # Easy to modify
-  output_dir: "results/"        # Easy to change
+```python
+# Configuration in Python scripts - Easy to modify
+# batch_calculate_distances.py
+TYPO_RATES = [0.2, 0.3, 0.4]  # Easy to modify
+OUTPUT_DIR = BASE_DIR / "results"  # Easy to change
 
-embedding:
-  model_name: "all-MiniLM-L6-v2"  # Swap models easily
+# embedding_utils.py
+MODEL_NAME = "all-MiniLM-L6-v2"  # Swap models easily
   device: "cpu"                    # GPU/CPU toggle
 ```
 
@@ -1268,8 +1282,8 @@ def compute_embedding(text: str, normalize: bool = True) -> np.ndarray:
 | Modification | Effort | Files Changed |
 |--------------|--------|---------------|
 | Add new language pair | Low | 1 file (new agent) |
-| Change embedding model | Low | 1 file (config.yaml) |
-| Add new typo type | Low | 1 file (typo_utils.py) |
+| Change embedding model | Low | 1 file (embedding_utils.py) |
+| Add new typo type | Low | 1 file (typo-injector/SKILL.md) |
 | Add new distance metric | Medium | 2 files (embedding_utils.py, tests) |
 | Change file format | Medium | 3 files (agent files) |
 

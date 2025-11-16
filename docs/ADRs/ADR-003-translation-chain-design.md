@@ -26,9 +26,9 @@ Output: English (potentially degraded)
 
 ### Agent Mapping
 ```
-translator_1.claude: EN → FR specialist
-translator_2.claude: FR → IT specialist
-translator_3.claude: IT → EN specialist
+.claude/agents/translators/translator-1-en-fr.md: EN → FR specialist
+.claude/agents/translators/translator-2-fr-it.md: FR → IT specialist
+.claude/agents/translators/translator-3-it-en.md: IT → EN specialist
 
 Each agent:
 - Has single language pair responsibility

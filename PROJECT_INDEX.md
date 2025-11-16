@@ -1,6 +1,6 @@
 # Project Index - Multi-Agent Translation Semantic Drift Experiment
 
-**Last Updated**: November 14, 2025
+**Last Updated**: November 16, 2025
 
 This document provides a quick navigation guide to all project files and their purposes.
 
@@ -32,7 +32,7 @@ This document provides a quick navigation guide to all project files and their p
 
 ### `/data/experiment_raw_data/` - Raw Experiment Data
 
-Contains all raw data from the November 14, 2025 experiment:
+Contains all raw data from the November 16, 2025 experiment:
 
 - **Original sentences**: `sentence_XX_original.txt` (21 files)
 - **Corrupted sentences**: `sentence_XX_corrupted.txt` (21 files)
@@ -70,9 +70,8 @@ Total: 66 files, ~150 KB
 |-------|-----------|---------|
 | `translate/SKILL.md` | Claude native | Language translation |
 | `typo-injector/SKILL.md` | Claude native | Word-based typo injection |
-| `embeddings/SKILL.md` | sentence-transformers | Semantic embedding computation |
+| `embeddings/SKILL.md` | sentence-transformers | Semantic embedding & distance computation |
 | `chart-generator/SKILL.md` | matplotlib | Visualization generation |
-| `semantic_analysis/` | Python | Distance measurement |
 
 ---
 
@@ -159,7 +158,7 @@ Total: 66 files, ~150 KB
 
 ## 📊 Experiment Quick Facts
 
-- **Date**: November 14, 2025
+- **Date**: November 16, 2025
 - **Sentences Tested**: 21
 - **Typo Rates**: 20%, 25%, 30%, 35%, 40%, 45%, 50%
 - **Sentences per Rate**: 3

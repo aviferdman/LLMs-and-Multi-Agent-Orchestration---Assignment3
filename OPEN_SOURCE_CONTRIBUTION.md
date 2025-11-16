@@ -161,9 +161,11 @@ def cosine_distance(vec1: np.ndarray, vec2: np.ndarray) -> float:
 
 ---
 
-#### **Component 2: Typo Injection Library**
+#### **Component 2: Typo Injection Skill**
 
-**Location:** `.claude/skills/typo-injector/typo_utils.py`
+**Location:** `.claude/skills/typo-injector/SKILL.md`
+
+**Implementation:** Claude-native skill (no Python code - Claude implements logic directly)
 
 **Functionality:**
 - Introduce realistic spelling errors at specified rate (0-100%)
@@ -202,9 +204,9 @@ def inject_typos(sentence: str, typo_rate: float = 0.2) -> str:
 
 **Architecture:**
 ```
-Agent 1 (EN→FR) → /tmp/first_hop.md
-Agent 2 (FR→IT) → /tmp/second_hop.md
-Agent 3 (IT→EN) → /tmp/third_hop.md
+Agent 1 (EN→FR) → tmp/first_hop.md
+Agent 2 (FR→IT) → tmp/second_hop.md
+Agent 3 (IT→EN) → tmp/third_hop.md
 ```
 
 **Reusability:**
@@ -219,9 +221,13 @@ Agent 3 (IT→EN) → /tmp/third_hop.md
 
 ---
 
-#### **Component 4: Visualization Utilities**
+#### **Component 4: Visualization and Chart Generation Skill**
 
-**Location:** `.claude/skills/chart-generator/chart_utils.py`
+**Location:** `.claude/skills/chart-generator/SKILL.md`
+
+**Implementation:** Claude-native skill (no Python code - Claude generates text-based visualizations)
+
+**Note:** For automated batch experiments, Python's matplotlib is used in `scripts/batch_calculate_distances.py`
 
 **Functionality:**
 - Generate publication-quality charts (300 DPI)
@@ -362,7 +368,7 @@ Typo injection fails on non-ASCII characters (e.g., "café")
 
 ### Changes
 - Added `bert-base-multilingual-cased` model support
-- Updated config.yaml with model selection
+- Updated `embedding_utils.py` with model selection parameter
 - Added comparative benchmark
 
 ### Performance

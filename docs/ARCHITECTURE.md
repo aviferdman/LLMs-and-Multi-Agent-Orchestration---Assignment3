@@ -111,13 +111,14 @@
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                        Shared File System                              │
 │                                                                         │
-│  /tmp/                           results/                              │
+│  tmp/                            results/                              │
 │  ├── original_sentence.txt       ├── manual_report.md                  │
 │  ├── input_sentence.txt          ├── automated_report.md               │
 │  ├── first_hop_translation.md    ├── semantic_drift_chart.png          │
 │  ├── second_hop_translation.md   └── experiment_results.csv            │
 │  └── third_hop_translation.md                                          │
 │                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
 └─────────────────────────────────────────────────────────────────────────┘
             │                       │
             │                       │
@@ -297,7 +298,7 @@ User Input: "Analyze: 'The quik brown fox...'"
     ▼
 ┌─────────────────┐
 │ Main            │
-│ Orchestrator    │ ──┐ Saves original to /tmp/original_sentence.txt
+│ Orchestrator    │ ──┐ Saves original to tmp/original_sentence.txt
 │                 │   │
 └─────────────────┘   │
     │                 │
@@ -305,7 +306,7 @@ User Input: "Analyze: 'The quik brown fox...'"
     ▼                 │
 ┌─────────────────┐   │
 │ Translator 1    │   │ Reads original, translates EN→FR
-│ (EN → FR)       │ ──┘ Writes to /tmp/first_hop_translation.md
+│ (EN → FR)       │ ──┘ Writes to tmp/first_hop_translation.md
 │                 │
 └─────────────────┘
     │
@@ -313,7 +314,7 @@ User Input: "Analyze: 'The quik brown fox...'"
     ▼
 ┌─────────────────┐
 │ Translator 2    │ ──┐ Reads French, translates FR→IT  
-│ (FR → IT)       │   │ Writes to /tmp/second_hop_translation.md
+│ (FR → IT)       │   │ Writes to tmp/second_hop_translation.md
 │                 │   │
 └─────────────────┘   │
     │                 │
@@ -321,7 +322,7 @@ User Input: "Analyze: 'The quik brown fox...'"
     ▼                 │
 ┌─────────────────┐   │
 │ Translator 3    │   │ Reads Italian, translates IT→EN
-│ (IT → EN)       │ ──┘ Writes to /tmp/third_hop_translation.md
+│ (IT → EN)       │ ──┘ Writes to tmp/third_hop_translation.md
 │                 │
 └─────────────────┘
     │
@@ -446,11 +447,11 @@ State Recovery:
 └─────────────────────────────────────────────────────────────────────────┘
 
 File Naming Convention:
-/tmp/original_sentence.txt      # Original input (clean)
-/tmp/input_sentence.txt         # Typo-injected version
-/tmp/first_hop_translation.md   # EN → FR result
-/tmp/second_hop_translation.md  # FR → IT result  
-/tmp/third_hop_translation.md   # IT → EN result
+tmp/original_sentence.txt      # Original input (clean)
+tmp/input_sentence.txt         # Typo-injected version
+tmp/first_hop_translation.md   # EN → FR result
+tmp/second_hop_translation.md  # FR → IT result  
+tmp/third_hop_translation.md   # IT → EN result
 
 File Format Standard:
 ---
@@ -634,7 +635,7 @@ Distance Calculation:
 File System Security:
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │ Temporary Files │    │ Result Files    │    │ Process         │
-│ (/tmp/)         │    │ (results/)      │    │ Isolation       │
+│ (tmp/)          │    │ (results/)      │    │ Isolation       │
 │                 │    │                 │    │                 │
 │ • Auto cleanup  │    │ • Persistent    │    │ • No external   │
 │ • Local only    │    │ • User owned    │    │   network calls │
@@ -668,7 +669,7 @@ Dependency Security:
 ### 7.2 Risk Mitigation
 
 **File Access Risks:**
-- Temporary files in isolated /tmp/ directory
+- Temporary files in isolated tmp/ directory
 - Automatic cleanup on completion
 - Process-level ownership controls
 
@@ -772,11 +773,14 @@ Local Development Environment:
 Directory Structure (Deployed):
 project-root/
 ├── .claude/                    # Agent definitions
-│   ├── main.claude            
+│   ├── main.md            
 │   ├── agents/                
-│   │   ├── translator_1.claude
-│   │   ├── translator_2.claude
-│   │   └── translator_3.claude
+│   │   ├── translators/
+│   │   │   ├── translator-1-en-fr.md
+│   │   │   ├── translator-2-fr-it.md
+│   │   │   └── translator-3-it-en.md
+│   │   └── orchestrators/
+│   │       └── batch-experiment-orchestrator.md
 │   └── skills/                # Reusable components
 ├── docs/                      # Documentation
 ├── results/                   # Output directory  

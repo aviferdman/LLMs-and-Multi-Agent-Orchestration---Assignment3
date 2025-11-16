@@ -40,10 +40,10 @@ When the user requests a batch experiment:
    - Returns: All distances + statistical summaries
 
 4. **Generate Report**:
-   - Create comprehensive markdown summary in `results/batch_experiment_summary.md`
-   - Include results table, statistics, key findings, individual run details
-   - Embed graph: `![Semantic Drift Analysis](./semantic_drift_analysis.png)`
-   - Save raw data in structured format
+   - The Python script creates comprehensive analysis in `results/quantitative_analysis.md`
+   - Includes results table, statistics, key findings, individual run details
+   - Embeds graph: `![Semantic Drift Analysis](./semantic_drift_analysis.png)`
+   - Saves raw data in structured format
 
 ## Expected Results Structure
 
@@ -61,9 +61,9 @@ When the user requests a batch experiment:
 ## Tools Available
 
 - **Bash**: Call Python scripts (`python scripts/batch_calculate_distances.py`)
-- **Task**: Launch translation chain agents (translator_1, translator_2, translator_3, embedding_analyzer)
-- **Write**: Save experiment data and results to `/results/`
-- **Read**: Read intermediate translation results from `/tmp/`
+- **Task**: Launch translation chain agents (translator-1-en-fr, translator-2-fr-it, translator-3-it-en, embedding_analyzer)
+- **Write**: Save experiment data and results to `results/`
+- **Read**: Read intermediate translation results from `tmp/`
 - **Skill**: Access typo-injector for error generation
 
 ## Python Scripts Used

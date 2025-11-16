@@ -459,9 +459,9 @@ This is a **command-line interface (CLI) and research-focused project** without 
 ✅ **Extensibility (Alternative to UI)**
 - **Clear Extension Points**:
   - Add new language chains (modify agent definitions)
-  - Add new typo types (extend typo_utils.py)
-  - Add new metrics (extend analysis skills)
-  - Add new visualization types (extend chart-generator)
+  - Add new typo types (extend typo-injector skill)
+  - Add new metrics (extend embedding_utils.py)
+  - Add new visualization types (extend chart-generator skill or batch_calculate_distances.py)
 - **Plugin Architecture**: Skill-based design allows easy additions
 - **Documentation**: Extension guide in README
 - **Modular Design**: Each component can be modified independently
@@ -711,16 +711,17 @@ Since UI/UX (10%) is excluded as not applicable, the remaining categories total 
 - [x] Main CLI (`calculate_distance.py`)
 - [x] Embedding utilities (`skills/embeddings/embedding_utils.py`)
 - [x] Distance calculation (`calculate_distance.py`)
-- [x] Typo injection (`skills/typo-injector/typo_utils.py`)
-- [x] Chart generation (`skills/chart-generator/chart_utils.py`)
-- [x] All with docstrings and type hints
+- [x] Typo injection skill (`.claude/skills/typo-injector/SKILL.md` - Claude-native)
+- [x] Chart generation skill (`.claude/skills/chart-generator/SKILL.md` - Claude-native)
+- [x] Batch visualization (`scripts/batch_calculate_distances.py` - matplotlib)
+- [x] All Python code with docstrings and type hints
 
 ### Agent Evidence ✅
-- [x] Translator 1 (EN→FR) (`agents/translator_1.claude`)
-- [x] Translator 2 (FR→IT) (`agents/translator_2.claude`)
-- [x] Translator 3 (IT→EN) (`agents/translator_3.claude`)
-- [x] Batch orchestrator (`agents/batch_experiment_orchestrator.claude`)
-- [x] Main orchestrator (`.claude/main.claude`)
+- [x] Translator 1 (EN→FR) (`.claude/agents/translators/translator-1-en-fr.md`)
+- [x] Translator 2 (FR→IT) (`.claude/agents/translators/translator-2-fr-it.md`)
+- [x] Translator 3 (IT→EN) (`.claude/agents/translators/translator-3-it-en.md`)
+- [x] Batch orchestrator (`.claude/agents/orchestrators/batch-experiment-orchestrator.md`)
+- [x] Main orchestrator (`.claude/main.md`)
 
 ### Testing Evidence ✅
 - [x] Test documentation with 13+ cases (`docs/TESTING.md`)

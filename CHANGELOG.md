@@ -72,7 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Agent Architecture:**
 - Autonomous agents with single responsibilities
-- File-based communication via `/tmp/` directory
+- File-based communication via `tmp/` directory
 - Markdown format for structured data exchange
 - No direct coupling between agents
 
@@ -117,20 +117,21 @@ LLMs-and-Multi-Agent-Orchestration---Assignment3/
 ├── calculate_distance.py             # CLI utility
 ├── .gitignore                        # Git ignore rules
 ├── .claude/                          # Claude environment
-│   ├── main.claude                   # Main orchestrator
+│   ├── main.md                       # Main orchestrator
 │   ├── settings.local.json          # Local settings
 │   ├── agents/                       # Agent definitions
-│   │   ├── translator_1.claude      # EN→FR agent
-│   │   ├── translator_2.claude      # FR→IT agent
-│   │   ├── translator_3.claude      # IT→EN agent
-│   │   └── batch_experiment_orchestrator.claude
+│   │   ├── translators/
+│   │   │   ├── translator-1-en-fr.md  # EN→FR agent
+│   │   │   ├── translator-2-fr-it.md  # FR→IT agent
+│   │   │   └── translator-3-it-en.md  # IT→EN agent
+│   │   └── orchestrators/
+│   │       └── batch-experiment-orchestrator.md
 │   ├── commands/                     # Custom commands
 │   └── skills/                       # Utility skills
-│       ├── embeddings/              # Embedding computation
+│       ├── embeddings/              # Embedding computation & distance calculation
 │       ├── typo-injector/           # Typo injection
 │       ├── translate/               # Translation skill
-│       ├── chart-generator/         # Visualization
-│       └── semantic_analysis/       # Distance calculation
+│       └── chart-generator/         # Visualization
 ├── docs/                             # Documentation
 │   ├── PRD.md                       # Product requirements
 │   ├── ARCHITECTURE.md              # System architecture

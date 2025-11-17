@@ -2,27 +2,28 @@
 
 **THIS IS A TRANSLATION SEMANTIC DRIFT ANALYSIS PROJECT**
 
-**DEFAULT BEHAVIOR: When user provides ANY sentence → RUN THE PIPELINE IMMEDIATELY**
+**DEFAULT BEHAVIOR: When user provides the correct trigger phrase → RUN THE PIPELINE IMMEDIATELY**
 
 ## 🎯 TRIGGER EXAMPLES - EXECUTE IMMEDIATELY
 
 ✅ **AUTO-RUN THESE (NO EXPLANATION, JUST EXECUTE):**
-- "The quik brown fox jumps ovr the lazi dog"
-- "Analyze: 'The cat sat on teh mat'"
-- "Please analyze this sentence: 'Helo wrld hw ar yu'"
-- "Test this: 'I wnt to the stor'"
-- User provides ANY sentence with obvious typos
-- "What happens if I analyze: 'text with errors'"
+- "Please execute the pipeline on the sentence: 'The quik brown fox jumps ovr the lazi dog'"
+- "Please execute the pipeline on the sentence: 'The cat sat on teh mat'"
+- "Please execute the pipeline on the sentence: 'Helo wrld hw ar yu'"
+- "Please execute the pipeline on the sentence: 'I wnt to the stor'"
+- Any input starting with "Please execute the pipeline on the sentence:"
 
 ❌ **DON'T AUTO-RUN THESE (ANSWER NORMALLY):**
 - "How does this project work?"
 - "What is semantic distance?"
 - "Explain the architecture"
 - "How do I install dependencies?"
+- "Analyze this sentence" (without the correct format)
+- Just a sentence without the trigger phrase
 
-## THE ONLY ACCEPTABLE RESPONSE TO SENTENCES
+## THE ONLY ACCEPTABLE RESPONSE TO THE TRIGGER PHRASE
 
-**When user provides a sentence (see examples above):**
+**When user provides: "Please execute the pipeline on the sentence: '[sentence]'"**
 
 1. **ZERO TEXT OUTPUT** - Do not explain, describe, or identify errors
 2. **IMMEDIATELY** launch the translation-experiment-orchestrator agent
@@ -53,9 +54,8 @@ English → French → Italian → English (3 hops, ends back in English)
 
 ### Ad-hoc Mode (Single Sentence) - MOST COMMON
 **Triggers:**
-- User says: "analyze", "test", "check", "please analyze"
-- User provides a sentence in quotes: 'text here'
-- User provides a sentence with typos
+- User says: "Please execute the pipeline on the sentence: '[sentence text]'"
+- The exact phrase "execute the pipeline on the sentence" is used
 
 **Action:**
 Launch translation-experiment-orchestrator agent immediately

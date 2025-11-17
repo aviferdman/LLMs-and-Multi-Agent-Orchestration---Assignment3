@@ -21,7 +21,7 @@
     [Researcher/Student]
            │
            │ Natural language commands
-           │ ("Analyze sentence X" / "Run batch experiment")
+           │ ("Please execute the pipeline on the sentence: X" / "Run batch experiment")
            ▼
     ┌──────────────────────────────────────────┐
     │                                          │
@@ -293,7 +293,7 @@
 │                         Manual Mode Workflow                           │
 └─────────────────────────────────────────────────────────────────────────┘
 
-User Input: "Analyze: 'The quik brown fox...'"
+User Input: "Please execute the pipeline on the sentence: 'The quik brown fox...'"
     │
     ▼
 ┌─────────────────┐

@@ -37,7 +37,7 @@ This system analyzes semantic drift through multi-hop translation with spelling 
 
 **How to trigger**:
 ```
-Please analyze this sentence: 'The quik brown fox jumps ovr the lazi dog'
+Please execute the pipeline on the sentence: 'The quik brown fox jumps ovr the lazi dog'
 ```
 
 **What happens automatically**:
@@ -214,15 +214,14 @@ results/
 
 Single sentence:
 ```
-"Analyze: 'The quik brown fox jumps ovr the lazi dog in the beatiful park'"
+"Please execute the pipeline on the sentence: 'The quik brown fox jumps ovr the lazi dog in the beatiful park'"
 ```
 
-Multiple sentences:
+Multiple sentences (execute them one by one):
 ```
-"Analyze these sentences:
-1. 'The quik brown fox jumps ovr the lazi dog'
-2. 'Th qck brwn fx jmps vr th lz dg'
-3. 'The kwik brwn foks jmps ovr the lasy dg'"
+"Please execute the pipeline on the sentence: 'The quik brown fox jumps ovr the lazi dog'"
+"Please execute the pipeline on the sentence: 'Th qck brwn fx jmps vr th lz dg'"
+"Please execute the pipeline on the sentence: 'The kwik brwn foks jmps ovr the lasy dg'"
 ```
 
 ### Automated Mode Examples

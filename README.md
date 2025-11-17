@@ -115,8 +115,8 @@ User provides sentence with typos
 
 ### Step-by-Step Process
 
-1. **User Input**: Provide an English sentence (may contain spelling errors)
-   - Example: "The quik brown fox jumps ovr the lazi dog"
+1. **User Input**: Provide an English sentence using the correct format
+   - Example: `"Please execute the pipeline on the sentence: 'The quik brown fox jumps ovr the lazi dog'"`
 
 2. **Main Orchestrator**:
    - Saves the original sentence to `tmp/original_sentence.txt`
@@ -199,7 +199,7 @@ This project supports two distinct experiment types: **User Input Experiments** 
 
 **Example**:
 ```
-User: "Please analyze this sentence: 'The quik brown fox jumps ovr the lazi dog'"
+User: "Please execute the pipeline on the sentence: 'The quik brown fox jumps ovr the lazi dog'"
 Claude: [Activates multi-agent system, reports semantic distance]
 ```
 
@@ -270,8 +270,7 @@ Claude: [Executes 21 translation chains (63 total operations), produces analysis
 **Using Claude Code CLI:**
 
 ```
-Please run the translation drift experiment with this sentence:
-"The quik brown fox jumps ovr the lazi dog"
+Please execute the pipeline on the sentence: "The quik brown fox jumps ovr the lazi dog"
 ```
 
 Claude will automatically:
@@ -281,9 +280,9 @@ Claude will automatically:
 4. Report results
 
 **Example sentences to try**:
-- `"The quik brown fox jumps ovr the lazi dog"` (25% typos)
-- `"Th qk brwn fx jmps vr th lz dg"` (50% typos)
-- `"Hello wrld, hw ar yu tday?"` (Different sentence structure)
+- `"Please execute the pipeline on the sentence: 'The quik brown fox jumps ovr the lazi dog'"` (25% typos)
+- `"Please execute the pipeline on the sentence: 'Th qk brwn fx jmps vr th lz dg'"` (50% typos)
+- `"Please execute the pipeline on the sentence: 'Hello wrld, hw ar yu tday?'"` (Different sentence structure)
 
 ### Method 2: Automated Experiments (Claude-Orchestrated Batch)
 
@@ -728,7 +727,7 @@ Generally, you should observe:
 
 **Input**:
 ```
-User: "Please analyze this sentence with typos: 'The quik brown fox jumps ovr the lazi dog'"
+User: "Please execute the pipeline on the sentence: 'The quik brown fox jumps ovr the lazi dog'"
 ```
 
 **Execution Flow**:
@@ -971,7 +970,7 @@ python -c "from sentence_transformers import SentenceTransformer; model = Senten
 python calculate_distance.py "Hello world" "Bonjour monde"
 
 # Run manual mode experiment (within Claude Code)
-# Ask Claude: "Analyze this sentence: [your sentence with typos]"
+# Ask Claude: "Please execute the pipeline on the sentence: '[your sentence with typos]'"
 
 # Run automated experiment (within Claude Code)
 # Ask Claude: "Run automated experiment"

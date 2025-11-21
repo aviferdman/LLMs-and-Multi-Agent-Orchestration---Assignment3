@@ -1,9 +1,24 @@
 """
 Utility functions for computing embeddings and measuring semantic distance.
+
+This module uses the centralized model_loader for fault-tolerant model loading.
 """
-from sentence_transformers import SentenceTransformer
+import sys
+from pathlib import Path
 import numpy as np
 from numpy.linalg import norm
+
+# Add project root to path to import model_loader
+project_root = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+try:
+    from model_loader import get_model as load_model_safely
+    MODEL_LOADER_AVAILABLE = True
+except ImportError:
+    # Fallback to direct import if model_loader not available
+    MODEL_LOADER_AVAILABLE = False
+    from sentence_transformers import SentenceTransformer
 
 
 # Global model instance (loaded once)
@@ -11,10 +26,39 @@ _model = None
 
 
 def get_model():
-    """Lazy-load the sentence transformer model."""
+    """
+    Lazy-load the sentence transformer model with fault-tolerant handling.
+    
+    Uses the centralized model_loader module which handles:
+    - SSL certificate errors
+    - Local model detection
+    - Offline mode
+    - Clear error messages
+    
+    Returns:
+        Loaded SentenceTransformer model
+        
+    Raises:
+        SystemExit: If model cannot be loaded
+    """
     global _model
     if _model is None:
-        _model = SentenceTransformer('all-MiniLM-L6-v2')
+        if MODEL_LOADER_AVAILABLE:
+            # Use fault-tolerant loader
+            _model = load_model_safely(verbose=True)
+        else:
+            # Fallback to simple loading (legacy)
+            import os
+            local_model_path = os.path.expanduser('~/models/all-MiniLM-L6-v2')
+            if os.path.exists(local_model_path):
+                _model = SentenceTransformer(local_model_path)
+            else:
+                try:
+                    _model = SentenceTransformer('all-MiniLM-L6-v2')
+                except Exception as e:
+                    print(f"\n❌ Failed to load model: {e}")
+                    print("\n💡 Run setup first: python3 setup.py")
+                    sys.exit(1)
     return _model
 
 

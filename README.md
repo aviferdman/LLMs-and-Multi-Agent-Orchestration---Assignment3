@@ -150,9 +150,34 @@ User provides sentence with typos
 ### Prerequisites
 
 - Python 3.8 or higher
+- Git with Git LFS (for model download)
 - Claude Code CLI (for user input experiments)
 
-### Step 1: Install Python Dependencies
+### Quick Setup (Recommended)
+
+**Run the automated setup script:**
+
+```bash
+python3 setup.py
+```
+
+This script will:
+- ✅ Check Python version and dependencies
+- ✅ Install required packages from `requirements.txt`
+- ✅ Download the embedding model (930MB)
+- ✅ **Handle SSL certificate errors automatically**
+- ✅ Set up offline mode for corporate/school networks
+- ✅ Validate the installation
+
+**That's it!** The project will be ready to use.
+
+---
+
+### Manual Installation (Alternative)
+
+If you prefer manual setup or need more control:
+
+#### Step 1: Install Python Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -166,14 +191,77 @@ This installs:
 - `matplotlib` - Visualization (for graphs)
 - `transformers` - NLP utilities
 
-### Step 2: Verify Installation
+#### Step 2: Install Git LFS
 
-Test the embeddings library:
 ```bash
-python -c "from sentence_transformers import SentenceTransformer; print('Embeddings: OK')"
+# macOS
+brew install git-lfs
+
+# Ubuntu/Debian
+sudo apt-get install git-lfs
+
+# Initialize Git LFS
+git lfs install
 ```
 
-On first run, the embedding model (~90MB) will be downloaded automatically.
+#### Step 3: Download Embedding Model
+
+**Option A: Automatic (if no SSL issues)**
+```bash
+python3 -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+```
+
+**Option B: Manual via Git (recommended for SSL issues)**
+```bash
+mkdir -p ~/models
+cd ~/models
+git clone https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+```
+
+This downloads the model locally and bypasses potential SSL certificate issues on corporate/school networks.
+
+#### Step 4: Verify Installation
+
+Test the model loader:
+```bash
+python3 model_loader.py
+```
+
+Or test a quick calculation:
+```bash
+python3 scripts/calculate_distance.py "hello world" "hi earth"
+```
+
+---
+
+### Troubleshooting SSL Issues
+
+If you see SSL certificate errors like:
+```
+SSLError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain
+```
+
+**This happens on corporate/school networks that intercept HTTPS traffic.**
+
+**Solution 1: Run the setup script (handles this automatically)**
+```bash
+python3 setup.py
+```
+
+**Solution 2: Use offline mode**
+```bash
+export HF_HUB_OFFLINE=1
+export MODEL_LOCAL_PATH=~/models/all-MiniLM-L6-v2
+```
+
+**Solution 3: Switch to home WiFi** (not corporate network)
+
+The project includes fault-tolerant model loading that:
+- ✅ Detects SSL errors automatically
+- ✅ Falls back to local model if available
+- ✅ Provides clear error messages
+- ✅ Never crashes silently
+- ✅ Works completely offline after initial setup
 
 ---
 
@@ -333,87 +421,78 @@ User: "Calculate semantic distance between 'Hello world' and 'Bonjour le monde'"
 
 ## Project Structure
 
+**See [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for complete details**
+
+### Root (Essential Files)
 ```
-.
-├── README.md                                     # This file
-├── USAGE.md                                      # Quick start guide
-├── requirements.txt                              # Python dependencies
-├── CHANGELOG.md                                  # Version history
-├── SELF_ASSESSMENT.md                            # Project self-assessment
-├── OPEN_SOURCE_CONTRIBUTION.md                   # Open source contributions
+├── START_HERE.md                                # Project overview (read first!)
+├── README.md                                    # This file - complete documentation
+├── SETUP_INSTRUCTIONS.md                        # Setup guide with fault-tolerant loading
+├── CHANGELOG.md                                 # Version history
+├── setup.py                                     # Automated setup script (run first!)
+├── model_loader.py                              # Fault-tolerant model loading
+├── run_interactive.py                           # Interactive semantic drift analyzer
+├── simple_demo.py                               # Explore experiment results
+├── visualize_results.py                         # Generate visualizations
+├── requirements.txt                             # Python dependencies
 │
 ├── .claude/                                      # Multi-agent system
 │   ├── main.md                                   # Main orchestrator
-│   ├── settings.local.json                       # Local settings
-│   │
-│   ├── agents/                                   # All agent definitions organized by type
-│   │   ├── translators/                          # Translation agents
-│   │   │   ├── translator-1-en-fr.md             # English → French
-│   │   │   ├── translator-2-fr-it.md             # French → Italian
-│   │   │   └── translator-3-it-en.md             # Italian → English
-│   │   │
-│   │   ├── orchestrators/                        # Orchestration agents
-│   │   │   ├── translation-experiment-orchestrator.md # Main experiment controller
-│   │   │   ├── batch-experiment-orchestrator.md       # Batch experiment runner
-│   │   │   └── embedding-analyzer.md                  # Semantic distance analyzer
-│   │   │
-│   │   ├── code-reviewer/                        # Code quality review agent
-│   │   │   └── code-reviewer.md                  # Expert code reviewer
-│   │   │
-│   │   └── qa-expert/                            # Quality assurance agent
-│   │       └── qa-expert.md                      # QA testing expert
-│   │
+│   ├── agents/                                   # All agent definitions
 │   ├── commands/                                 # Command definitions
-│   │   └── run-translation-experiment.md         # Experiment execution command
-│   │
-│   └── skills/                                   # Reusable skills (only .md files)
-│       ├── translate/
-│       │   └── SKILL.md                          # Translation skill (native Claude)
-│       ├── typo-injector/
-│       │   └── SKILL.md                          # Typo injection (word-based)
-│       ├── embeddings/
-│       │   └── SKILL.md                          # Embedding computation
-│       └── chart-generator/
-│           └── SKILL.md                          # Chart generation
+│   └── skills/                                   # Reusable skills with embeddings
 │
 ├── scripts/                                      # Python analysis scripts
 │   ├── calculate_distance.py                     # Single sentence distance (CLI)
 │   └── batch_calculate_distances.py              # Batch distance calculation + visualization
 │
-├── tmp/                                          # Agent communication files (gitignored)
-│   ├── original_sentence.txt                     # Original user input
-│   ├── first_hop_translation.md                  # English → French
-│   ├── second_hop_translation.md                 # French → Italian
-│   └── third_hop_translation.md                  # Italian → English
-│
 ├── results/                                      # Experiment results
 │   ├── semantic_drift_analysis.png               # Matplotlib graph (auto-generated)
 │   └── quantitative_analysis.md                  # Statistics table (auto-generated)
 │
-├── data/                                         # Experiment data
-│   └── experiment_raw_data/                      # Raw data from latest experiment
-│       ├── sentence_XX_original.txt              # Original sentences (21 files)
-│       ├── sentence_XX_corrupted.txt             # Corrupted sentences (21 files)
-│       ├── all_translations_complete.txt         # All translation chains
-│       ├── distance_results.txt                  # Semantic distances
-│       └── verification_summary.txt              # Typo verification data
+├── data/experiment_raw_data/                     # Raw data from experiments
+│   ├── sentence_XX_original.txt                  # Original sentences (21 files)
+│   ├── sentence_XX_corrupted.txt                 # Corrupted sentences (21 files)
+│   └── distance_results.txt                      # Semantic distances
 │
-└── docs/                                         # Documentation
+├── tests/                                        # Test suite
+│   ├── test_calculate_distance.py
+│   ├── test_batch_calculate_distances.py
+│   └── test_embedding_utils.py
+│
+└── docs/                                         # Documentation (organized!)
     ├── ARCHITECTURE.md                           # System architecture
     ├── MATHEMATICAL_FOUNDATIONS.md               # Mathematical basis
     ├── RESEARCH_METHODOLOGY.md                   # Research approach
     ├── TESTING.md                                # Test documentation
-    ├── PROMPT_BOOK.md                            # Prompt engineering guide
-    ├── PRD.md                                    # Product requirements
     ├── SECURITY.md                               # Security considerations
-    ├── COST_ANALYSIS.md                          # Cost analysis
-    ├── EDGE_CASES.md                             # Edge case handling
-    ├── ISO_IEC_25010_COMPLIANCE.md               # Quality compliance
-    └── ADRs/                                     # Architecture Decision Records
-        ├── ADR-001-multi-agent-design.md
-        ├── ADR-002-embedding-model-selection.md
-        └── ADR-003-translation-chain-design.md
+    │
+    ├── HOW_TO_RUN.md                             # Old guide (see SETUP_INSTRUCTIONS.md)
+    ├── QUICK_START.md                            # Old quick start
+    ├── USAGE.md                                  # Usage examples
+    ├── RESULTS_EXPLANATION.md                    # Experiment results explanation
+    │
+    ├── PROJECT_INDEX.md                          # Project file index
+    ├── SUBMISSION_CHECKLIST.md                   # Submission requirements
+    ├── SELF_ASSESSMENT.md                        # Project self-assessment
+    ├── OPEN_SOURCE_CONTRIBUTION.md               # Open source guide
+    │
+    ├── ADRs/                                     # Architecture Decision Records
+    │   ├── ADR-001-multi-agent-design.md
+    │   ├── ADR-002-embedding-model-selection.md
+    │   └── ADR-003-translation-chain-design.md
+    │
+    ├── setup/                                    # Setup documentation
+    │   ├── FAULT_TOLERANT_SETUP_SUMMARY.md       # Implementation details
+    │   └── PULL_REQUEST.md                       # PR description
+    │
+    └── results-user-session/                     # User session results
+        ├── FINAL_RESULTS.md                      # User's analysis results
+        ├── SUCCESS_SUMMARY.md                    # Session summary
+        └── your_results_summary.md               # Detailed comparison
 ```
+
+**Note:** See [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for complete file organization
 
 ---
 

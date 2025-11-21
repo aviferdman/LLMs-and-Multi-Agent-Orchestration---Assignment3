@@ -1,15 +1,32 @@
 """
 Simple script to calculate semantic distance between two sentences.
+
 This script ONLY handles embeddings and distance calculation.
 Translation is handled by Claude agents.
+
+Uses fault-tolerant model loading to handle SSL errors and offline mode.
+If the model is not found, run: python3 setup.py
 """
 import sys
+import os
 from pathlib import Path
 
-# Add embeddings skill to path
+# Add project root and embeddings skill to path
 base_dir = Path(__file__).parent.parent
+sys.path.insert(0, str(base_dir))
 sys.path.append(str(base_dir / '.claude' / 'skills' / 'embeddings'))
 
+# Load environment variables if .env exists
+env_file = base_dir / '.env'
+if env_file.exists():
+    with open(env_file) as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, value = line.split('=', 1)
+                os.environ.setdefault(key.strip(), value.strip())
+
+# Import utilities (they will use fault-tolerant loader internally)
 from embedding_utils import compute_embedding, cosine_distance
 
 
